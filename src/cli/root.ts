@@ -9,6 +9,7 @@ import {
 } from '../core/manager/manager.js'
 import { Logger } from '../core/logger/logger.js'
 import { renderTasksList } from '../core/ui/tasks-list/TasksList.js'
+import { Manager, ManagerTask } from '../types/index.js'
 
 export async function createRootCommand(): Promise<Command> {
   const program = new Command()
@@ -57,7 +58,7 @@ async function executeCommand(
   }
 }
 
-async function executeWithoutArgs(managers: any[]): Promise<void> {
+async function executeWithoutArgs(managers: Manager[]): Promise<void> {
   const tasks = await getAllManagerTasks(managers)
 
   if (tasks.length === 0) {
@@ -69,12 +70,12 @@ async function executeWithoutArgs(managers: any[]): Promise<void> {
 }
 
 async function executeWithArgs(
-  managers: any[],
+  managers: Manager[],
   taskQuery: string,
   taskArgs: string[],
   autoSelectClosest: boolean
 ): Promise<void> {
-  let tasks
+  let tasks: ManagerTask[]
 
   if (autoSelectClosest) {
     // Find the single closest match

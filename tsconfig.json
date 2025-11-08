@@ -12,7 +12,6 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "jsx": "react",
-    "jsxImportSource": "react",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

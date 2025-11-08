@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { render, Box, Text, useInput, useApp } from 'ink'
 import { ManagerTask } from '../../../types/index.js'
 import { executeSingleTask } from '../../manager/manager.js'
+import { Logger } from '../../logger/logger.js'
 import chalk from 'chalk'
 
 interface Props {
@@ -46,7 +47,7 @@ function TasksList({ tasks, initialFilter = '' }: Props) {
 
   useInput((input, key) => {
     // Help toggle
-    if (input === '?' || key.f1) {
+    if (input === '?') {
       setShowHelp(!showHelp)
       return
     }
@@ -152,7 +153,7 @@ function TasksList({ tasks, initialFilter = '' }: Props) {
           try {
             await executeSingleTask(selected)
           } catch (error) {
-            console.error('Failed to execute task:', error)
+            Logger.error('Failed to execute task', error as Error)
             process.exit(1)
           }
         })
@@ -355,7 +356,7 @@ function TasksList({ tasks, initialFilter = '' }: Props) {
           {filteredTasks.length} / {tasks.length} tasks
         </Text>
         <Text color="gray" dimColor>
-          Press ? or F1 for help
+          Press ? for help
         </Text>
       </Box>
     </Box>
@@ -378,7 +379,7 @@ function highlightMatch(text: string, filter: string): string {
   return `${before}${chalk.bgYellow.black(match)}${after}`
 }
 
-function HelpPanel({ onClose }: { onClose: () => void }) {
+function HelpPanel({ onClose: _onClose }: { onClose: () => void }) {
   return (
     <Box flexDirection="column" padding={2}>
       <Box
@@ -450,7 +451,7 @@ function HelpPanel({ onClose }: { onClose: () => void }) {
               <Text color="green">v</Text> - Toggle view mode
             </Text>
             <Text>
-              <Text color="green">?/F1</Text> - Toggle this help
+              <Text color="green">?</Text> - Toggle this help
             </Text>
             <Text>
               <Text color="green">q/ESC</Text> - Quit

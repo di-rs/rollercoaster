@@ -1,6 +1,6 @@
 import { join } from 'path'
 import { Manager, ManagerTitle, Task, TaskfileV3 } from '../../../types/index.js'
-import { parseYAML, fileExists, findFileInTree } from '../config-file/config-file.js'
+import { parseYAML, fileExists } from '../config-file/config-file.js'
 import { createTask } from '../../task/task.js'
 import { Logger } from '../../logger/logger.js'
 import { executeCommand } from '../js/utils.js'

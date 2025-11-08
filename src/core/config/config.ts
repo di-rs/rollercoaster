@@ -1,5 +1,6 @@
 import Conf from 'conf'
 import { Config } from '../../types/index.js'
+import type { Schema } from 'conf'
 
 interface ConfigSchema {
   defaultJSManager: string
@@ -7,17 +8,17 @@ interface ConfigSchema {
   autoSelectClosest: boolean
 }
 
-const schema = {
+const schema: Schema<ConfigSchema> = {
   defaultJSManager: {
-    type: 'string' as const,
+    type: 'string',
     default: 'npm',
   },
   enableDefaultJSManager: {
-    type: 'boolean' as const,
+    type: 'boolean',
     default: false,
   },
   autoSelectClosest: {
-    type: 'boolean' as const,
+    type: 'boolean',
     default: true,
   },
 }
@@ -28,7 +29,7 @@ export class ConfigManager {
   constructor() {
     this.conf = new Conf<ConfigSchema>({
       projectName: 'rollercoaster',
-      schema: schema as any,
+      schema,
     })
   }
 

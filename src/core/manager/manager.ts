@@ -1,5 +1,5 @@
 import Fuse from 'fuse.js'
-import { Manager, ManagerTask, Task } from '../../types/index.js'
+import { Manager, ManagerTask } from '../../types/index.js'
 import { sortTasks } from '../task/task.js'
 import { Logger } from '../logger/logger.js'
 
