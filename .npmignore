@@ -1,0 +1,29 @@
+# Source files
+src/
+tsconfig.json
+tsdown.config.ts
+
+# Development files
+.github/
+.vscode/
+*.test.ts
+*.spec.ts
+
+# Documentation (except README)
+MIGRATION_GUIDE.md
+CURRENT_FUNCTIONALITY.md
+
+# Go files
+*.go
+go.mod
+go.sum
+Taskfile.yml
+.goreleaser.yaml
+
+# Git
+.git/
+.gitignore
+
+# Tests
+coverage/
+.nyc_output/
