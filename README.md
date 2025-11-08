@@ -1,97 +1,349 @@
-# rollercoaster :roller_coaster:
+# 🎢 Rollercoaster
 
-Running scripts without need to know the task/script manager. Roll on them like a rollercoaster!
+> Run tasks/scripts without needing to know which package manager or task runner is being used. Roll through them like a rollercoaster!
 
-## Installation
+[![npm version](https://img.shields.io/npm/v/@dmitriy-rs/rollercoaster.svg)](https://www.npmjs.com/package/@dmitriy-rs/rollercoaster)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-### Homebrew
+A smart CLI tool that automatically detects and runs tasks from multiple sources (npm, pnpm, yarn, Taskfile) with a beautiful interactive interface, fuzzy search, and extensive keyboard shortcuts.
+
+## ✨ Features
+
+- 🔍 **Fuzzy Search** - Type partial names to find tasks (`bld` matches `build`)
+- 🎨 **Beautiful TUI** - Modern terminal interface with colors and borders
+- 📋 **Task Preview** - See task details before executing
+- ⌨️ **Vim-style Navigation** - Efficient keyboard shortcuts (j/k, h/l, g/G)
+- 🚀 **Auto-detection** - Automatically finds npm, pnpm, yarn, and Taskfile
+- 📄 **Smart Pagination** - Clean interface even with many tasks
+- 🔦 **Search Highlighting** - Visual feedback with highlighted matches
+- 💡 **Interactive Help** - Press `?` or `F1` for full keyboard reference
+- 🎯 **Zero Configuration** - Works out of the box
+
+## 🎯 Supported Task Runners
+
+- **npm** - package.json scripts
+- **pnpm** - pnpm workspaces and scripts
+- **yarn** - yarn v1.x scripts
+- **Task** - Taskfile.yml (go-task/task v3)
+
+## 📦 Installation
+
+### Using npm
 
 ```sh
-brew tap dmitriy-rs/tap
-brew install rollercoaster
+npm install -g @dmitriy-rs/rollercoaster
 ```
 
-### Using Go
+### Using pnpm
 
 ```sh
-go install https://github.com/dmitriy-rs/rollercoaster@latest
+pnpm add -g @dmitriy-rs/rollercoaster
+```
+
+### Using yarn
+
+```sh
+yarn global add @dmitriy-rs/rollercoaster
 ```
 
 ### From source
 
 ```sh
-# Clone repo 
+# Clone the repository
 git clone https://github.com/dmitriy-rs/rollercoaster
 cd rollercoaster
 
-# Build and install
-go build -o rollercoaster ./main.go
+# Install dependencies
+npm install
+
+# Build
+npm run build
+
+# Install globally
+npm install -g .
 ```
 
-Then place the binary somewhere in your PATH.
-```sh
-# For example
-sudo mv rollercoaster /usr/local/bin/rollercoaster
-```
+## 🚀 Usage
 
-## Usage
+### Show all available tasks
 
-Type the name of the command to see all available actions in the current scope
 ```sh
-# will show the list with all available tasks
 rollercoaster
 ```
 
-Type some letters from the command to run one of the commands
+This displays an interactive list of all tasks from all detected managers.
+
+### Fuzzy search and execute
+
 ```sh
-# it will trigger pnpm lint command
+# Matches "build"
+rollercoaster bld
+
+# Matches "test"
+rollercoaster tst
+
+# Matches "lint"
 rollercoaster li
-# or ever will trigger the same action
-rollercoaster l
 ```
 
-That's so simple as that :) 
+### With arguments
 
-### Alias
+```sh
+# Pass arguments to the task
+rollercoaster test --watch --coverage
+```
 
-I suggest to create alias in your shell for the command. Something short and handy, I use `r` ("run" mnemonic)
-```zsh
-# ~/.zshenv
+### Create an alias
+
+For maximum convenience, create a short alias:
+
+```sh
+# ~/.zshrc or ~/.bashrc
 alias r="rollercoaster"
+
+# Now you can use:
+r              # Show all tasks
+r bld          # Build
+r t            # Test
 ```
 
-## TODO
+## ⌨️ Keyboard Shortcuts
 
-### Pre-release tasks
+### Navigation
+- `↑` or `k` - Move up
+- `↓` or `j` - Move down
+- `←` or `h` - Previous page
+- `→` or `l` - Next page
+- `g` - Jump to first task
+- `G` - Jump to last task (Shift+g)
 
-- [x] Default js workspace tasks (add, remove, install, npx)
-- [ ] ~CLI flag --cwd to start cli in different target directory~
-- [ ] UI with task selection
-- [ ] If multiple task matches the query show the same selection UI with mached tasks
-- [ ] --accept-first config to always select first match instead of showing the UI
-- [ ] Show which letters where matched in UI
-- [x] Fuzzy search on mistakes if `ilt` provided `lint` should be selected if available
-- [ ] Add Bun and Deno support
+### Search & Filter
+- `/` - Start filtering
+- `c` - Clear active filter
+- `ESC` - Exit filter mode
+- `Enter` - Confirm filter / Execute task
 
-### Think
+### Actions
+- `Enter` - Execute selected task
+- `v` - Toggle view mode
+- `?` or `F1` - Show help
+- `q` or `ESC` - Quit
 
-- [ ] Fallback js manager
-- [ ] Nested lock files with different package managers (why?)
+## 🎨 UI Preview
 
-### On-release tasks
+```
+╭────────────────────────────────────────────────────────╮
+│                                                        │
+│ 🎢 Rollercoaster Task Runner                           │
+│                                                        │
+│ Manager: npm • /home/user/project                      │
+│                                                        │
+╰────────────────────────────────────────────────────────╯
 
-- [ ] Setup pipeline for release into different platforms
-- [ ] Provide good README
-- [ ] Provide good installation guide for different platforms
-- [ ] Add coverage, release and platform badges
+╭──────────────────╮  ╭────────────────────────────────╮
+│ ❯ build [npm]    │  │ 📋 Task Details                │
+│   test [npm]     │  │                                │
+│   dev [npm]      │  │ Name: build                    │
+│   lint [Task]    │  │                                │
+│                  │  │ Description:                   │
+╰──────────────────╯  │ Build the project with tsdown  │
+                      │                                │
+  Page 1/2 • 13 tasks │ Directory:                     │
+                      │ /home/user/project             │
+                      │                                │
+                      │ Manager: npm                   │
+                      ╰────────────────────────────────╯
 
-### After initial release
+┌──────────────────────────────────────────────────────┐
+│ 13 / 13 tasks                Press ? or F1 for help  │
+└──────────────────────────────────────────────────────┘
+```
 
-- [ ] Investigate into shell integration
-- [ ] Integrate with zsh shell and test usability
-- [ ] Add README for shell usage
-- [ ] Global command to enable/disable shell intergation
-- [ ] Add support to bash itegration
-- [ ] Investigate NX support
-- [ ] Investigate Makefile support
-- [ ] Infinite bug fixes
+## 🔧 Configuration
+
+Rollercoaster automatically creates a configuration file at `~/.rollercoaster/config.toml`:
+
+```toml
+# Default JavaScript package manager when none detected
+DefaultJSManager = "npm"
+
+# Enable using default manager when no lock file found
+EnableDefaultJSManager = false
+
+# Automatically select first match (false shows selection UI)
+AutoSelectClosest = true
+```
+
+## 📚 How It Works
+
+1. **Manager Detection**: Scans from current directory to git root
+2. **Lock File Priority**: pnpm-lock.yaml > yarn.lock > package-lock.json
+3. **Task Collection**: Gathers all tasks from detected managers
+4. **Fuzzy Matching**: Uses fuse.js for intelligent task matching
+5. **Interactive UI**: Displays tasks in a beautiful Ink-based interface
+
+## 🛠️ Development
+
+### Prerequisites
+
+- Node.js 18+
+- npm, pnpm, or yarn
+
+### Setup
+
+```sh
+# Install dependencies
+npm install
+
+# Run in development mode
+npm run dev
+
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test -- --coverage
+
+# Build
+npm run build
+
+# Type check
+npm run typecheck
+
+# Lint
+npm run lint
+
+# Format
+npm run format
+```
+
+### Project Structure
+
+```
+src/
+├── cli/              # CLI command definitions
+├── core/
+│   ├── config/      # Configuration management
+│   ├── logger/      # Styled logging
+│   ├── task/        # Task utilities
+│   ├── manager/     # Manager system
+│   │   ├── js/      # JavaScript managers (npm, pnpm, yarn)
+│   │   ├── task-manager/  # Task runner integration
+│   │   ├── parser/  # Manager detection
+│   │   └── config-file/   # File parsing
+│   └── ui/
+│       └── tasks-list/    # Ink-based TUI
+├── types/           # TypeScript definitions
+└── index.ts         # Entry point
+```
+
+## 🧪 Testing
+
+The project includes comprehensive test coverage:
+
+- Unit tests for all core components
+- Integration tests for manager detection
+- File system operation tests
+- Fuzzy search algorithm tests
+
+Run tests with:
+```sh
+npm test
+```
+
+## 📖 Documentation
+
+- [UI Features](./UI_FEATURES.md) - Detailed UI feature documentation
+- [Migration Guide](./MIGRATION_GUIDE.md) - Go to TypeScript migration guide
+- [Current Functionality](./CURRENT_FUNCTIONALITY.md) - Complete feature documentation
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+MIT © [Dmitriy](https://github.com/dmitriy-rs)
+
+## 🙏 Acknowledgments
+
+Built with:
+- [Ink](https://github.com/vadimdemedes/ink) - React for CLIs
+- [Commander.js](https://github.com/tj/commander.js) - CLI framework
+- [Fuse.js](https://fusejs.io/) - Fuzzy search
+- [Chalk](https://github.com/chalk/chalk) - Terminal styling
+- [tsdown](https://tsdown.vercel.app/) - TypeScript bundler
+
+## 🗺️ Roadmap
+
+### Current Version ✅
+- [x] Multi-manager support (npm, pnpm, yarn, Task)
+- [x] Fuzzy search
+- [x] Interactive TUI with pagination
+- [x] Task preview panel
+- [x] Vim-style keyboard shortcuts
+- [x] Search highlighting
+- [x] Interactive help
+- [x] Configuration file
+
+### Planned Features
+- [ ] Task favorites/bookmarks
+- [ ] Recent tasks history
+- [ ] Custom color themes
+- [ ] Task execution history
+- [ ] Multi-select for batch execution
+- [ ] Bun and Deno support
+- [ ] Makefile support
+- [ ] Custom keybindings
+
+### Future Ideas
+- [ ] Shell integration (zsh, bash)
+- [ ] Task aliases
+- [ ] Workspace-aware task grouping
+- [ ] Task dependencies visualization
+- [ ] Performance metrics
+- [ ] Task execution time tracking
+
+## ❓ FAQ
+
+**Q: How does Rollercoaster detect which package manager to use?**
+A: It scans for lock files (pnpm-lock.yaml, yarn.lock, package-lock.json) and uses the corresponding manager.
+
+**Q: Can I use it in a monorepo?**
+A: Yes! It scans from the current directory up to the git root and detects all managers along the way.
+
+**Q: Does it work with Yarn v2+?**
+A: Currently only Yarn v1.x is supported. Yarn v2+ (Berry) support is planned.
+
+**Q: What if I have multiple package.json files?**
+A: Rollercoaster will find and list tasks from all of them, showing the directory for each.
+
+**Q: How do I disable fuzzy search?**
+A: Set `AutoSelectClosest = false` in `~/.rollercoaster/config.toml` to always show the selection UI.
+
+## 🐛 Troubleshooting
+
+**Tasks not showing up?**
+- Make sure you're in a directory with a package.json or Taskfile.yml
+- Check that your lock files are present
+- Run with `NODE_ENV=development` to see debug logs
+
+**Wrong manager detected?**
+- Check lock files in your directory
+- Set `DefaultJSManager` in config file
+- Enable `EnableDefaultJSManager` if needed
+
+**UI rendering issues?**
+- Ensure your terminal supports colors
+- Try a different terminal emulator
+- Check terminal width (minimum 80 columns recommended)
+
+---
+
+Made with ❤️ by [Dmitriy](https://github.com/dmitriy-rs) • [Report Issues](https://github.com/dmitriy-rs/rollercoaster/issues)
