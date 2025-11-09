@@ -77,7 +77,7 @@ export async function getAllManagerTasks(
       sorted.forEach((task) => {
         allTasks.push({ task, manager })
       })
-    } catch (error) {
+    } catch (_error) {
       Logger.warn(`Failed to get tasks from ${manager.getTitle().name}`)
     }
   }

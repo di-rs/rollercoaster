@@ -1,4 +1,5 @@
 import { join } from 'path'
+import { existsSync } from 'fs'
 import { Manager, ManagerTitle, Task, PackageJson, JsWorkspace } from '../../../types/index.js'
 import { parseJSON, fileExists } from '../config-file/config-file.js'
 import { NpmWorkspace } from './npm.js'
@@ -26,12 +27,12 @@ export class JsManager implements Manager {
 
     // Synchronous check for simplicity in constructor
     try {
-      if (require('fs').existsSync(pnpmLockPath)) {
+      if (existsSync(pnpmLockPath)) {
         // Try to detect pnpm version from lockfile
         return new PnpmWorkspace('9+', this.directory)
-      } else if (require('fs').existsSync(yarnLockPath)) {
+      } else if (existsSync(yarnLockPath)) {
         return new YarnWorkspace('1', this.directory)
-      } else if (require('fs').existsSync(npmLockPath)) {
+      } else if (existsSync(npmLockPath)) {
         return new NpmWorkspace(this.directory)
       }
     } catch {
