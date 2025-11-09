@@ -9,6 +9,7 @@ import {
 } from '../core/manager/manager.js'
 import { Logger } from '../core/logger/logger.js'
 import { renderTasksList } from '../core/ui/tasks-list/TasksList.js'
+import { renderConfigList } from '../core/ui/config-list/ConfigList.js'
 import { Manager, ManagerTask } from '../types/index.js'
 
 export async function createRootCommand(): Promise<Command> {
@@ -27,6 +28,19 @@ export async function createRootCommand(): Promise<Command> {
         await executeCommand(taskQuery, taskArgs)
       } catch (error) {
         Logger.error('Failed to execute command', error as Error)
+        process.exit(1)
+      }
+    })
+
+  // Add config subcommand
+  program
+    .command('config')
+    .description('Open configuration interface')
+    .action(async () => {
+      try {
+        await renderConfigList()
+      } catch (error) {
+        Logger.error('Failed to open config interface', error as Error)
         process.exit(1)
       }
     })
