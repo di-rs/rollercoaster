@@ -1,7 +1,0 @@
-{
-  "name": "test-pnpm-random-project",
-  "version": "1.0.0",
-  "dependencies": {
-    "moment": "^2.29.0"
-  }
-} 

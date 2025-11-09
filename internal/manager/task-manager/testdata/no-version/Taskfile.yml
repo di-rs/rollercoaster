@@ -1,5 +1,0 @@
-tasks:
-  build:
-    desc: "Build the application"
-    cmds:
-      - echo "Building the application"

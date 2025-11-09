@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 env:
-  GO_VERSION: '1.24'
+  NODE_VERSION: '20'
 
 jobs:
   lint:
@@ -15,43 +15,45 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          go-version: ${{ env.GO_VERSION }}
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
 
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
-        with:
-          version: v2.1
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GO_VERSION }}
 
-      - name: Download dependencies
-        run: go mod download
-        
-      - name: Verify dependencies
-        run: go mod verify
-        
-      - name: Build
-        run: go build -v ./...
-        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run tests
-        run: go test -race -ldflags "-X github.com/dmitriy-rs/rollercoaster/internal/logger.MODE=TEST" -covermode=atomic -coverprofile=coverage.out ./...
-        
+        run: npm test -- --coverage
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          file: ./coverage.out
+          file: ./coverage/coverage-final.json
           flags: unittests
           name: codecov-umbrella
-          fail_ci_if_error: false 
+          fail_ci_if_error: false
 
   build:
     runs-on: ubuntu-latest
@@ -59,16 +61,52 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        go-version: ${{ env.GO_VERSION }}
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
 
-    - name: Download dependencies
-      run: go mod download
+    - name: Install dependencies
+      run: npm ci
 
     - name: Build
-      run: go build -v ./...
+      run: npm run build
 
-    - name: Build binary
-      run: go build -o rollercoaster ./main.go
+    - name: Verify build output
+      run: |
+        if [ ! -f "dist/index.mjs" ]; then
+          echo "Build failed: dist/index.mjs not found"
+          exit 1
+        fi
+        echo "Build successful!"
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/
+        retention-days: 7
+
+  test-multiple-node-versions:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
