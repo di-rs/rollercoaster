@@ -6,7 +6,7 @@ export default defineConfig({
   clean: true,
   shims: true,
   platform: 'node',
-  target: 'node18',
+  target: 'node20',
   sourcemap: true,
   dts: false,
 })

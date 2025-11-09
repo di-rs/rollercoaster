@@ -186,7 +186,7 @@ AutoSelectClosest = true
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - npm, pnpm, or yarn
 
 ### Setup
