@@ -33,7 +33,7 @@ describe('TaskManager', () => {
 
   describe('listTasks', () => {
     it('should list tasks from Taskfile.yml', async () => {
-      const taskfile: TaskfileV3 = {
+      const _taskfile: TaskfileV3 = {
         version: '3',
         tasks: {
           build: {

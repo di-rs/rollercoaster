@@ -23,7 +23,7 @@ class MockManager implements Manager {
     return this.tasks
   }
 
-  async executeTask(task: Task, args?: string[]) {
+  async executeTask(_task: Task, _args?: string[]) {
     // Mock implementation
   }
 }
