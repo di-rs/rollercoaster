@@ -45,20 +45,6 @@ jobs:
             echo "has_changesets=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Version packages
-        if: steps.check-changesets.outputs.has_changesets == 'true'
-        id: get-version
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          bun run version
-          git add .
-          git commit -m "chore: version packages [skip ci]"
-          git push origin HEAD
-          
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Build npm package (JS bundle)
         if: steps.check-changesets.outputs.has_changesets == 'true'
         run: bun run build:npm
@@ -76,18 +62,40 @@ jobs:
           echo "Standalone executables:"
           ls -lh dist/rollercoaster-*
 
-      - name: Publish to npm
+      - name: Version and publish to npm
         if: steps.check-changesets.outputs.has_changesets == 'true'
+        id: publish
         # Uses npm trusted publishing with OIDC (no tokens needed)
         # Requires id-token: write permission and trusted publisher configured on npmjs.com
         # See: https://docs.npmjs.com/trusted-publishers/
-        run: bun run build && changeset publish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Version packages (updates package.json, CHANGELOG, removes changesets)
+          bun run version
+          
+          # Publish to npm
+          changeset publish
+          
+          # Get the new version
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release
+      - name: Commit version changes and push (without tag)
+        if: steps.check-changesets.outputs.has_changesets == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: version packages [skip ci]" || echo "No changes to commit"
+          git push origin HEAD
+
+      - name: Create GitHub Release with tag
         if: steps.check-changesets.outputs.has_changesets == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get-version.outputs.version }}
+          tag_name: v${{ steps.publish.outputs.version }}
           generate_release_notes: true
           files: |
             dist/rollercoaster-*
@@ -99,7 +107,7 @@ jobs:
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
         run: |
-          VERSION="${{ steps.get-version.outputs.version }}"
+          VERSION="${{ steps.publish.outputs.version }}"
           
           # Get SHA256 of both macOS binaries
           SHA256_ARM64=$(shasum -a 256 dist/rollercoaster-macos-arm64 | awk '{print $1}')
