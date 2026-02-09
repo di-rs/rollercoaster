@@ -8,6 +8,7 @@ import {
 	getAllManagerTasks,
 } from "../core/manager/manager.js";
 import { parseManagers } from "../core/manager/parser/parser.js";
+import { renderConfigList } from "../core/ui/config-list/ConfigList.js";
 import { renderTasksList } from "../core/ui/tasks-list/TasksList.js";
 import type { Manager, ManagerTask } from "../types/index.js";
 
@@ -27,6 +28,22 @@ export async function createRootCommand(): Promise<Command> {
 				await executeCommand(taskQuery, taskArgs);
 			} catch (error) {
 				Logger.error("Failed to execute command", error as Error);
+				process.exit(1);
+			}
+		});
+
+	// Add config subcommand
+	program
+		.command("config")
+		.description("Open configuration interface")
+		.action(async () => {
+			try {
+				await renderConfigList();
+			} catch (error) {
+				Logger.error(
+					"Failed to open config interface",
+					error instanceof Error ? error : new Error(String(error)),
+				);
 				process.exit(1);
 			}
 		});
