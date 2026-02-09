@@ -54,11 +54,6 @@ chmod +x rollercoaster
 sudo mv rollercoaster /usr/local/bin/
 ```
 
-**Windows:**
-```powershell
-# Download from GitHub releases
-# https://github.com/di-rs/rollercoaster/releases/latest/download/rollercoaster-windows-x64.exe
-```
 
 ### Using Homebrew (macOS)
 
@@ -257,7 +252,6 @@ bun run build
 bun run build:bin:macos-arm64  # Apple Silicon
 bun run build:bin:macos-x64    # Intel Mac
 bun run build:bin:linux-x64    # Linux x86_64
-bun run build:bin:windows-x64  # Windows x86_64
 
 # Build all platforms (npm package + all executables)
 bun run build:all
@@ -348,41 +342,6 @@ Built with:
 - [Chalk](https://github.com/chalk/chalk) - Terminal styling
 - [Biome](https://biomejs.dev/) - Fast formatter and linter
 
-## 🗺️ Roadmap
-
-### Current Version ✅
-- [x] Multi-manager support (npm, pnpm, yarn, Task)
-- [x] Fuzzy search
-- [x] Interactive TUI with pagination
-- [x] Task preview panel
-- [x] Vim-style keyboard shortcuts
-- [x] Search highlighting
-- [x] Interactive help
-- [x] Configuration file
-
-### Planned Features
-- [ ] Task favorites/bookmarks
-- [ ] Recent tasks history
-- [ ] Custom color themes
-- [ ] Task execution history
-- [ ] Multi-select for batch execution
-- [x] Bun support
-- [ ] Deno support
-- [ ] Makefile support
-- [ ] Custom keybindings
-
-### Future Ideas
-- [ ] Shell integration (zsh, bash)
-- [ ] Task aliases
-- [ ] Workspace-aware task grouping
-- [ ] Task dependencies visualization
-- [ ] Performance metrics
-- [ ] Task execution time tracking
-
-## ❓ FAQ
-
-**Q: How does Rollercoaster detect which package manager to use?**
-A: It scans for lock files (pnpm-lock.yaml, yarn.lock, package-lock.json) and uses the corresponding manager.
 
 **Q: Can I use it in a monorepo?**
 A: Yes! It scans from the current directory up to the git root and detects all managers along the way.
