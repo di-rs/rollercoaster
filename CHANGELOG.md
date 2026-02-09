@@ -1,4 +1,4 @@
-# @di/rollercoaster
+# @di-rs/rollercoaster
 
 ## 1.1.0
 

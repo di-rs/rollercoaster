@@ -91,7 +91,7 @@ jobs:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
         run: |
           VERSION="${{ steps.get-version.outputs.version }}"
-          TARBALL_URL="https://registry.npmjs.org/@di/rollercoaster/-/rollercoaster-${VERSION}.tgz"
+          TARBALL_URL="https://registry.npmjs.org/@di-rs/rollercoaster/-/rollercoaster-${VERSION}.tgz"
           
           # Download tarball to calculate SHA256
           curl -sL "$TARBALL_URL" -o package.tgz

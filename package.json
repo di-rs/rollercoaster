@@ -1,5 +1,5 @@
 {
-  "name": "@di/rollercoaster",
+  "name": "@di-rs/rollercoaster",
   "version": "1.1.0",
   "description": "CLI tool for running tasks without knowing the manager",
   "type": "module",
