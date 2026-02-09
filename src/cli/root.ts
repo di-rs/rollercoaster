@@ -40,7 +40,10 @@ export async function createRootCommand(): Promise<Command> {
 			try {
 				await renderConfigList();
 			} catch (error) {
-				Logger.error("Failed to open config interface", error as Error);
+				Logger.error(
+					"Failed to open config interface",
+					error instanceof Error ? error : new Error(String(error)),
+				);
 				process.exit(1);
 			}
 		});
