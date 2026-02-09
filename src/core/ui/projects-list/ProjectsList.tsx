@@ -36,7 +36,7 @@ function ProjectsList({ projects, onSelect }: Props) {
 		// Reset to first page when filter changes
 		setCurrentPage(0);
 		setSelectedIndex(0);
-	}, []);
+	}, [filter]);
 
 	useEffect(() => {
 		// Adjust selection if it goes out of bounds
