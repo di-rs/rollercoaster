@@ -29,8 +29,40 @@ A smart CLI tool that automatically detects and runs tasks from multiple sources
 
 ## 📦 Installation
 
+### Download Standalone Binary (Recommended)
+
+No runtime dependencies required! Download the binary for your platform:
+
+**macOS:**
+```sh
+# Apple Silicon (M1/M2/M3)
+curl -L https://github.com/di-rs/rollercoaster/releases/latest/download/rollercoaster-macos-arm64 -o rollercoaster
+chmod +x rollercoaster
+sudo mv rollercoaster /usr/local/bin/
+
+# Intel
+curl -L https://github.com/di-rs/rollercoaster/releases/latest/download/rollercoaster-macos-x64 -o rollercoaster
+chmod +x rollercoaster
+sudo mv rollercoaster /usr/local/bin/
+```
+
+**Linux:**
+```sh
+# x86_64
+curl -L https://github.com/di-rs/rollercoaster/releases/latest/download/rollercoaster-linux-x64 -o rollercoaster
+chmod +x rollercoaster
+sudo mv rollercoaster /usr/local/bin/
+```
+
+**Windows:**
+```powershell
+# Download from GitHub releases
+# https://github.com/di-rs/rollercoaster/releases/latest/download/rollercoaster-windows-x64.exe
+```
+
 ### Using Homebrew (macOS)
 
+Homebrew now uses the standalone binary (no Node.js required):
 ```sh
 brew tap di-rs/tap
 brew install rollercoaster
@@ -70,8 +102,11 @@ cd rollercoaster
 # Install dependencies
 bun install
 
-# Build
+# Build npm package
 bun run build
+
+# Build standalone executable
+bun run build:bin
 
 # Install globally
 bun link
@@ -201,7 +236,7 @@ AutoSelectClosest = true
 ### Prerequisites
 
 - Node.js 20+
-- [Bun](https://bun.sh) (recommended) or npm/pnpm/yarn
+- [Bun](https://bun.sh) (required for building standalone executables)
 
 ### Setup
 
@@ -218,8 +253,20 @@ bun test
 # Run tests with coverage
 bun test --coverage
 
-# Build
+# Build npm package (outputs to dist/index.mjs)
 bun run build
+
+# Build standalone executable for current platform
+bun run build:bin
+
+# Build for specific platforms
+bun run build:bin:macos-arm64  # Apple Silicon
+bun run build:bin:macos-x64    # Intel Mac
+bun run build:bin:linux-x64    # Linux x86_64
+bun run build:bin:windows-x64  # Windows x86_64
+
+# Build all platforms (npm package + all executables)
+bun run build:all
 
 # Type check
 bun run typecheck
@@ -234,7 +281,18 @@ bun run format
 bun run check
 ```
 
-> **Note**: This project uses Bun as the primary package manager. While npm/pnpm/yarn will work, Bun is recommended for the best experience.
+> **Note**: This project uses Bun for development and building. The standalone executables are self-contained and include the Bun runtime, so end users don't need Node.js or Bun installed.
+
+### Build System
+
+The project now uses `bun build --compile` to create standalone executables:
+
+- **npm package**: Built with `tsdown` for backwards compatibility (traditional installation via npm/pnpm/yarn)
+- **Standalone executables**: Built with `bun build --compile` for direct download and use
+  - No runtime dependencies required
+  - Includes Bun runtime embedded in the binary
+  - Optimized with minification, sourcemaps, and bytecode compilation
+  - Cross-platform builds from a single machine (Linux, macOS, Windows)
 
 ### Project Structure
 

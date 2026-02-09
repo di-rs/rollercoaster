@@ -11,8 +11,14 @@
     "dist"
   ],
   "scripts": {
-    "dev": "tsdown --watch src/index.ts",
+    "dev": "bun run --watch src/index.ts",
     "build": "tsdown src/index.ts",
+    "build:bin": "bun build --compile --minify --sourcemap --bytecode src/index.ts --outfile dist/rollercoaster",
+    "build:bin:macos-arm64": "bun build --compile --minify --sourcemap --bytecode --target=bun-darwin-arm64 src/index.ts --outfile dist/rollercoaster-macos-arm64",
+    "build:bin:macos-x64": "bun build --compile --minify --sourcemap --bytecode --target=bun-darwin-x64 src/index.ts --outfile dist/rollercoaster-macos-x64",
+    "build:bin:linux-x64": "bun build --compile --minify --sourcemap --bytecode --target=bun-linux-x64 src/index.ts --outfile dist/rollercoaster-linux-x64",
+    "build:bin:windows-x64": "bun build --compile --minify --sourcemap --bytecode --target=bun-windows-x64 src/index.ts --outfile dist/rollercoaster-windows-x64",
+    "build:all": "bun run build && bun run build:bin:macos-arm64 && bun run build:bin:macos-x64 && bun run build:bin:linux-x64 && bun run build:bin:windows-x64",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "lint": "biome lint src",

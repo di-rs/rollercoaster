@@ -82,16 +82,24 @@ jobs:
     - name: Install dependencies
       run: bun install --frozen-lockfile
 
-    - name: Build
+    - name: Build npm package
       run: bun run build
 
-    - name: Verify build output
+    - name: Build standalone executable
+      run: bun run build:bin
+
+    - name: Verify build outputs
       run: |
         if [ ! -f "dist/index.mjs" ]; then
           echo "Build failed: dist/index.mjs not found"
           exit 1
         fi
+        if [ ! -f "dist/rollercoaster" ]; then
+          echo "Build failed: dist/rollercoaster executable not found"
+          exit 1
+        fi
         echo "Build successful!"
+        ls -lh dist/
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
