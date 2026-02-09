@@ -1,236 +1,244 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdir, writeFile, rm } from 'fs/promises'
-import { join } from 'path'
-import { tmpdir } from 'os'
-import { JsManager } from './js-manager.js'
-import { PackageJson } from '../../../types/index.js'
+import { mkdir, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type { PackageJson } from "../../../types/index.js";
+import { JsManager } from "./js-manager.js";
 
-describe('JsManager', () => {
-  let testDir: string
+describe("JsManager", () => {
+	let testDir: string;
 
-  beforeEach(async () => {
-    testDir = join(tmpdir(), `js-manager-test-${Date.now()}`)
-    await mkdir(testDir, { recursive: true })
-  })
+	beforeEach(async () => {
+		testDir = join(tmpdir(), `js-manager-test-${Date.now()}`);
+		await mkdir(testDir, { recursive: true });
+	});
 
-  afterEach(async () => {
-    try {
-      await rm(testDir, { recursive: true, force: true })
-    } catch {
-      // Ignore errors
-    }
-  })
+	afterEach(async () => {
+		try {
+			await rm(testDir, { recursive: true, force: true });
+		} catch {
+			// Ignore errors
+		}
+	});
 
-  describe('getTitle', () => {
-    it('should return npm as default manager', async () => {
-      const manager = new JsManager(testDir, 'npm')
-      const title = manager.getTitle()
+	describe("getTitle", () => {
+		it("should return npm as default manager", async () => {
+			const manager = new JsManager(testDir, "npm");
+			const title = manager.getTitle();
 
-      expect(title.name).toBe('npm')
-      expect(title.description).toBe(testDir)
-    })
+			expect(title.name).toBe("npm");
+			expect(title.description).toBe(testDir);
+		});
 
-    it('should detect pnpm from lock file', async () => {
-      await writeFile(join(testDir, 'pnpm-lock.yaml'), '')
-      const manager = new JsManager(testDir, 'npm')
-      const title = manager.getTitle()
+		it("should detect pnpm from lock file", async () => {
+			await writeFile(join(testDir, "pnpm-lock.yaml"), "");
+			const manager = new JsManager(testDir, "npm");
+			const title = manager.getTitle();
 
-      expect(title.name).toBe('pnpm@9+')
-    })
+			expect(title.name).toBe("pnpm@9+");
+		});
 
-    it('should detect yarn from lock file', async () => {
-      await writeFile(join(testDir, 'yarn.lock'), '')
-      const manager = new JsManager(testDir, 'npm')
-      const title = manager.getTitle()
+		it("should detect yarn from lock file", async () => {
+			await writeFile(join(testDir, "yarn.lock"), "");
+			const manager = new JsManager(testDir, "npm");
+			const title = manager.getTitle();
 
-      expect(title.name).toBe('yarn@1')
-    })
+			expect(title.name).toBe("yarn@1");
+		});
 
-    it('should detect npm from lock file', async () => {
-      await writeFile(join(testDir, 'package-lock.json'), '{}')
-      const manager = new JsManager(testDir, 'pnpm')
-      const title = manager.getTitle()
+		it("should detect npm from lock file", async () => {
+			await writeFile(join(testDir, "package-lock.json"), "{}");
+			const manager = new JsManager(testDir, "pnpm");
+			const title = manager.getTitle();
 
-      expect(title.name).toBe('npm')
-    })
+			expect(title.name).toBe("npm");
+		});
 
-    it('should use default manager when no lock file', async () => {
-      const manager = new JsManager(testDir, 'pnpm')
-      const title = manager.getTitle()
+		it("should detect bun from lock file", async () => {
+			await writeFile(join(testDir, "bun.lockb"), "");
+			const manager = new JsManager(testDir, "npm");
+			const title = manager.getTitle();
 
-      expect(title.name).toBe('pnpm@9+')
-    })
-  })
+			expect(title.name).toBe("bun");
+		});
 
-  describe('listTasks', () => {
-    it('should list tasks from package.json scripts', async () => {
-      const packageJson: PackageJson = {
-        name: 'test-package',
-        version: '1.0.0',
-        scripts: {
-          build: 'tsc',
-          test: 'vitest',
-          dev: 'vite',
-        },
-      }
+		it("should use default manager when no lock file", async () => {
+			const manager = new JsManager(testDir, "pnpm");
+			const title = manager.getTitle();
 
-      await writeFile(
-        join(testDir, 'package.json'),
-        JSON.stringify(packageJson, null, 2)
-      )
+			expect(title.name).toBe("pnpm@9+");
+		});
+	});
 
-      const manager = new JsManager(testDir, 'npm')
-      const tasks = await manager.listTasks()
+	describe("listTasks", () => {
+		it("should list tasks from package.json scripts", async () => {
+			const packageJson: PackageJson = {
+				name: "test-package",
+				version: "1.0.0",
+				scripts: {
+					build: "tsc",
+					test: "vitest",
+					dev: "vite",
+				},
+			};
 
-      expect(tasks).toHaveLength(3)
-      const taskNames = tasks.map((t) => t.name)
-      expect(taskNames).toContain('build')
-      expect(taskNames).toContain('test')
-      expect(taskNames).toContain('dev')
-    })
+			await writeFile(
+				join(testDir, "package.json"),
+				JSON.stringify(packageJson, null, 2),
+			);
 
-    it('should include script content as description', async () => {
-      const packageJson: PackageJson = {
-        scripts: {
-          build: 'tsc',
-        },
-      }
+			const manager = new JsManager(testDir, "npm");
+			const tasks = await manager.listTasks();
 
-      await writeFile(
-        join(testDir, 'package.json'),
-        JSON.stringify(packageJson, null, 2)
-      )
+			expect(tasks).toHaveLength(3);
+			const taskNames = tasks.map((t) => t.name);
+			expect(taskNames).toContain("build");
+			expect(taskNames).toContain("test");
+			expect(taskNames).toContain("dev");
+		});
 
-      const manager = new JsManager(testDir, 'npm')
-      const tasks = await manager.listTasks()
+		it("should include script content as description", async () => {
+			const packageJson: PackageJson = {
+				scripts: {
+					build: "tsc",
+				},
+			};
 
-      expect(tasks[0].description).toBe('tsc')
-    })
+			await writeFile(
+				join(testDir, "package.json"),
+				JSON.stringify(packageJson, null, 2),
+			);
 
-    it('should include directory in task', async () => {
-      const packageJson: PackageJson = {
-        scripts: {
-          build: 'tsc',
-        },
-      }
+			const manager = new JsManager(testDir, "npm");
+			const tasks = await manager.listTasks();
 
-      await writeFile(
-        join(testDir, 'package.json'),
-        JSON.stringify(packageJson, null, 2)
-      )
+			expect(tasks[0].description).toBe("tsc");
+		});
 
-      const manager = new JsManager(testDir, 'npm')
-      const tasks = await manager.listTasks()
+		it("should include directory in task", async () => {
+			const packageJson: PackageJson = {
+				scripts: {
+					build: "tsc",
+				},
+			};
 
-      expect(tasks[0].directory).toBe(testDir)
-    })
+			await writeFile(
+				join(testDir, "package.json"),
+				JSON.stringify(packageJson, null, 2),
+			);
 
-    it('should return empty array if package.json does not exist', async () => {
-      const manager = new JsManager(testDir, 'npm')
-      const tasks = await manager.listTasks()
+			const manager = new JsManager(testDir, "npm");
+			const tasks = await manager.listTasks();
 
-      expect(tasks).toEqual([])
-    })
+			expect(tasks[0].directory).toBe(testDir);
+		});
 
-    it('should return empty array if scripts is undefined', async () => {
-      const packageJson: PackageJson = {
-        name: 'test-package',
-        version: '1.0.0',
-      }
+		it("should return empty array if package.json does not exist", async () => {
+			const manager = new JsManager(testDir, "npm");
+			const tasks = await manager.listTasks();
 
-      await writeFile(
-        join(testDir, 'package.json'),
-        JSON.stringify(packageJson, null, 2)
-      )
+			expect(tasks).toEqual([]);
+		});
 
-      const manager = new JsManager(testDir, 'npm')
-      const tasks = await manager.listTasks()
+		it("should return empty array if scripts is undefined", async () => {
+			const packageJson: PackageJson = {
+				name: "test-package",
+				version: "1.0.0",
+			};
 
-      expect(tasks).toEqual([])
-    })
+			await writeFile(
+				join(testDir, "package.json"),
+				JSON.stringify(packageJson, null, 2),
+			);
 
-    it('should return empty array if scripts is empty', async () => {
-      const packageJson: PackageJson = {
-        name: 'test-package',
-        version: '1.0.0',
-        scripts: {},
-      }
+			const manager = new JsManager(testDir, "npm");
+			const tasks = await manager.listTasks();
 
-      await writeFile(
-        join(testDir, 'package.json'),
-        JSON.stringify(packageJson, null, 2)
-      )
+			expect(tasks).toEqual([]);
+		});
 
-      const manager = new JsManager(testDir, 'npm')
-      const tasks = await manager.listTasks()
+		it("should return empty array if scripts is empty", async () => {
+			const packageJson: PackageJson = {
+				name: "test-package",
+				version: "1.0.0",
+				scripts: {},
+			};
 
-      expect(tasks).toEqual([])
-    })
+			await writeFile(
+				join(testDir, "package.json"),
+				JSON.stringify(packageJson, null, 2),
+			);
 
-    it('should handle malformed package.json', async () => {
-      await writeFile(join(testDir, 'package.json'), '{ invalid json }')
+			const manager = new JsManager(testDir, "npm");
+			const tasks = await manager.listTasks();
 
-      const manager = new JsManager(testDir, 'npm')
-      const tasks = await manager.listTasks()
+			expect(tasks).toEqual([]);
+		});
 
-      expect(tasks).toEqual([])
-    })
+		it("should handle malformed package.json", async () => {
+			await writeFile(join(testDir, "package.json"), "{ invalid json }");
 
-    it('should handle package.json with complex scripts', async () => {
-      const packageJson: PackageJson = {
-        scripts: {
-          'build:prod': 'NODE_ENV=production tsc',
-          'test:watch': 'vitest --watch',
-          'pre-commit': 'lint-staged',
-        },
-      }
+			const manager = new JsManager(testDir, "npm");
+			const tasks = await manager.listTasks();
 
-      await writeFile(
-        join(testDir, 'package.json'),
-        JSON.stringify(packageJson, null, 2)
-      )
+			expect(tasks).toEqual([]);
+		});
 
-      const manager = new JsManager(testDir, 'npm')
-      const tasks = await manager.listTasks()
+		it("should handle package.json with complex scripts", async () => {
+			const packageJson: PackageJson = {
+				scripts: {
+					"build:prod": "NODE_ENV=production tsc",
+					"test:watch": "vitest --watch",
+					"pre-commit": "lint-staged",
+				},
+			};
 
-      expect(tasks).toHaveLength(3)
-      const taskNames = tasks.map((t) => t.name)
-      expect(taskNames).toContain('build:prod')
-      expect(taskNames).toContain('test:watch')
-      expect(taskNames).toContain('pre-commit')
-    })
-  })
+			await writeFile(
+				join(testDir, "package.json"),
+				JSON.stringify(packageJson, null, 2),
+			);
 
-  describe('workspace detection priority', () => {
-    it('should prefer pnpm-lock.yaml over other lock files', async () => {
-      await writeFile(join(testDir, 'pnpm-lock.yaml'), '')
-      await writeFile(join(testDir, 'yarn.lock'), '')
-      await writeFile(join(testDir, 'package-lock.json'), '{}')
+			const manager = new JsManager(testDir, "npm");
+			const tasks = await manager.listTasks();
 
-      const manager = new JsManager(testDir, 'npm')
-      const title = manager.getTitle()
+			expect(tasks).toHaveLength(3);
+			const taskNames = tasks.map((t) => t.name);
+			expect(taskNames).toContain("build:prod");
+			expect(taskNames).toContain("test:watch");
+			expect(taskNames).toContain("pre-commit");
+		});
+	});
 
-      expect(title.name).toBe('pnpm@9+')
-    })
+	describe("workspace detection priority", () => {
+		it("should prefer pnpm-lock.yaml over other lock files", async () => {
+			await writeFile(join(testDir, "pnpm-lock.yaml"), "");
+			await writeFile(join(testDir, "yarn.lock"), "");
+			await writeFile(join(testDir, "package-lock.json"), "{}");
 
-    it('should prefer yarn.lock over package-lock.json', async () => {
-      await writeFile(join(testDir, 'yarn.lock'), '')
-      await writeFile(join(testDir, 'package-lock.json'), '{}')
+			const manager = new JsManager(testDir, "npm");
+			const title = manager.getTitle();
 
-      const manager = new JsManager(testDir, 'npm')
-      const title = manager.getTitle()
+			expect(title.name).toBe("pnpm@9+");
+		});
 
-      expect(title.name).toBe('yarn@1')
-    })
-  })
+		it("should prefer yarn.lock over package-lock.json", async () => {
+			await writeFile(join(testDir, "yarn.lock"), "");
+			await writeFile(join(testDir, "package-lock.json"), "{}");
 
-  describe('getWorkspace', () => {
-    it('should return the workspace instance', async () => {
-      const manager = new JsManager(testDir, 'npm')
-      const workspace = manager.getWorkspace()
+			const manager = new JsManager(testDir, "npm");
+			const title = manager.getTitle();
 
-      expect(workspace).toBeDefined()
-      expect(workspace.name()).toBe('npm')
-    })
-  })
-})
+			expect(title.name).toBe("yarn@1");
+		});
+	});
+
+	describe("getWorkspace", () => {
+		it("should return the workspace instance", async () => {
+			const manager = new JsManager(testDir, "npm");
+			const workspace = manager.getWorkspace();
+
+			expect(workspace).toBeDefined();
+			expect(workspace.name()).toBe("npm");
+		});
+	});
+});
