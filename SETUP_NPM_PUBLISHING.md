@@ -18,7 +18,7 @@ As of December 2025, npm has deprecated classic authentication tokens in favor o
 
 ### 1. Configure Trusted Publisher on npmjs.com
 
-1. Go to your package settings on npmjs.com: https://www.npmjs.com/package/@di/rollercoaster/access
+1. Go to your package settings on npmjs.com: https://www.npmjs.com/package/@di-rs/rollercoaster/access
 2. Scroll to the **"Trusted Publisher"** section
 3. Click **"GitHub Actions"** button
 4. Fill in the configuration:
