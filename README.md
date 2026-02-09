@@ -222,6 +222,9 @@ bun run lint
 
 # Format
 bun run format
+
+# Check and fix (lint + format)
+bun run check
 ```
 
 > **Note**: This project uses Bun as the primary package manager. While npm/pnpm/yarn will work, Bun is recommended for the best experience.
@@ -288,6 +291,7 @@ Built with:
 - [Fuse.js](https://fusejs.io/) - Fuzzy search
 - [Chalk](https://github.com/chalk/chalk) - Terminal styling
 - [tsdown](https://tsdown.vercel.app/) - TypeScript bundler
+- [Biome](https://biomejs.dev/) - Fast formatter and linter
 
 ## 🗺️ Roadmap
 

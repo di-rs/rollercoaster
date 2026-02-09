@@ -1,85 +1,85 @@
-import { readFile, access } from 'fs/promises'
-import { join, dirname } from 'path'
-import yaml from 'js-yaml'
+import { access, readFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import yaml from "js-yaml";
 
 export async function fileExists(path: string): Promise<boolean> {
-  try {
-    await access(path)
-    return true
-  } catch {
-    return false
-  }
+	try {
+		await access(path);
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 export async function findFileInTree(
-  filename: string,
-  startDir: string,
-  rootDir: string
+	filename: string,
+	startDir: string,
+	rootDir: string,
 ): Promise<string | null> {
-  let currentDir = startDir
+	let currentDir = startDir;
 
-  while (currentDir.startsWith(rootDir) || currentDir === rootDir) {
-    const filePath = join(currentDir, filename)
-    if (await fileExists(filePath)) {
-      return filePath
-    }
+	while (currentDir.startsWith(rootDir) || currentDir === rootDir) {
+		const filePath = join(currentDir, filename);
+		if (await fileExists(filePath)) {
+			return filePath;
+		}
 
-    const parentDir = dirname(currentDir)
-    if (parentDir === currentDir) break
-    currentDir = parentDir
-  }
+		const parentDir = dirname(currentDir);
+		if (parentDir === currentDir) break;
+		currentDir = parentDir;
+	}
 
-  return null
+	return null;
 }
 
 export async function findFilesInTree(
-  filenames: string[],
-  startDir: string,
-  rootDir: string
+	filenames: string[],
+	startDir: string,
+	rootDir: string,
 ): Promise<string[]> {
-  const found: string[] = []
-  let currentDir = startDir
+	const found: string[] = [];
+	let currentDir = startDir;
 
-  while (currentDir.startsWith(rootDir) || currentDir === rootDir) {
-    for (const filename of filenames) {
-      const filePath = join(currentDir, filename)
-      if (await fileExists(filePath) && !found.includes(filePath)) {
-        found.push(filePath)
-      }
-    }
+	while (currentDir.startsWith(rootDir) || currentDir === rootDir) {
+		for (const filename of filenames) {
+			const filePath = join(currentDir, filename);
+			if ((await fileExists(filePath)) && !found.includes(filePath)) {
+				found.push(filePath);
+			}
+		}
 
-    const parentDir = dirname(currentDir)
-    if (parentDir === currentDir) break
-    currentDir = parentDir
-  }
+		const parentDir = dirname(currentDir);
+		if (parentDir === currentDir) break;
+		currentDir = parentDir;
+	}
 
-  return found
+	return found;
 }
 
 export async function parseJSON<T>(path: string): Promise<T> {
-  const content = await readFile(path, 'utf-8')
-  return JSON.parse(content) as T
+	const content = await readFile(path, "utf-8");
+	return JSON.parse(content) as T;
 }
 
 export async function parseYAML<T>(path: string): Promise<T> {
-  const content = await readFile(path, 'utf-8')
-  return yaml.load(content) as T
+	const content = await readFile(path, "utf-8");
+	return yaml.load(content) as T;
 }
 
 export async function findGitRoot(startDir: string): Promise<string> {
-  let currentDir = startDir
+	let currentDir = startDir;
 
-  while (true) {
-    const gitPath = join(currentDir, '.git')
-    if (await fileExists(gitPath)) {
-      return currentDir
-    }
+	while (true) {
+		const gitPath = join(currentDir, ".git");
+		if (await fileExists(gitPath)) {
+			return currentDir;
+		}
 
-    const parentDir = dirname(currentDir)
-    if (parentDir === currentDir) {
-      // Reached root, return start dir
-      return startDir
-    }
-    currentDir = parentDir
-  }
+		const parentDir = dirname(currentDir);
+		if (parentDir === currentDir) {
+			// Reached root, return start dir
+			return startDir;
+		}
+		currentDir = parentDir;
+	}
 }
