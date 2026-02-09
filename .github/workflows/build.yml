@@ -85,26 +85,13 @@ jobs:
     - name: Build npm package
       run: bun run build
 
-    - name: Verify build outputs
+    - name: Verify npm bundle
       run: |
-        echo "Checking for built executables..."
-        
-        if [ ! -f "dist/rollercoaster-macos-arm64" ]; then
-          echo "Build failed: dist/rollercoaster-macos-arm64 not found"
+        if [ ! -f "dist/index.js" ]; then
+          echo "Build failed: dist/index.js not found"
           exit 1
         fi
-        
-        if [ ! -f "dist/rollercoaster-macos-x64" ]; then
-          echo "Build failed: dist/rollercoaster-macos-x64 not found"
-          exit 1
-        fi
-        
-        if [ ! -f "dist/rollercoaster-linux-x64" ]; then
-          echo "Build failed: dist/rollercoaster-linux-x64 not found"
-          exit 1
-        fi
-        
-        echo "Build successful! All executables created:"
+        echo "Build successful! npm bundle created:"
         ls -lh dist/
 
     - name: Upload build artifacts
