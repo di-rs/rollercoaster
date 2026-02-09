@@ -4,11 +4,16 @@
   "description": "CLI tool for running tasks without knowing the manager",
   "type": "module",
   "packageManager": "bun@1.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/di-rs/rollercoaster.git"
+  },
+  "homepage": "https://github.com/di-rs/rollercoaster",
+  "bugs": {
+    "url": "https://github.com/di-rs/rollercoaster/issues"
+  },
   "author": "Dima Portish",
   "license": "MIT",
-  "bin": {
-    "rollercoaster": "./dist/index.mjs"
-  },
   "files": [
     "dist"
   ],
