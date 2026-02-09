@@ -7,6 +7,9 @@
   "bin": {
     "rollercoaster": "./dist/index.mjs"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsdown --watch src/index.ts",
     "build": "tsdown src/index.ts",
