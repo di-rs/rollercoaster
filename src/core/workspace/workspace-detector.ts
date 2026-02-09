@@ -192,6 +192,21 @@ async function listProjectsUsingCommand(
 					}
 				}
 			}
+
+			// Add root project if not already included
+			const hasRoot = projects.some((p) => p.isRoot);
+			if (!hasRoot) {
+				const rootPackageJson = await parseJSON<PackageJson>(
+					join(dir, "package.json"),
+				);
+				if (rootPackageJson.name) {
+					projects.unshift({
+						name: rootPackageJson.name,
+						path: dir,
+						isRoot: true,
+					});
+				}
+			}
 		} else if (packageManager === "pnpm") {
 			// pnpm list -r --depth -1 --json lists all workspace packages
 			const { stdout } = await execAsync("pnpm list -r --depth -1 --json", {

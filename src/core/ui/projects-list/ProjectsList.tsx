@@ -135,20 +135,24 @@ function ProjectsList({ projects, onSelect }: Props) {
 		}
 
 		if (input === "G") {
-			setCurrentPage(totalPages - 1);
-			setSelectedIndex(
-				Math.min(ITEMS_PER_PAGE - 1, filteredProjects.length - startIndex - 1),
+			const newPage = totalPages - 1;
+			const newStartIndex = newPage * ITEMS_PER_PAGE;
+			const itemsOnLastPage = filteredProjects.length - newStartIndex;
+			const newSelectedIndex = Math.min(
+				ITEMS_PER_PAGE - 1,
+				itemsOnLastPage - 1,
 			);
+
+			setCurrentPage(newPage);
+			setSelectedIndex(Math.max(0, newSelectedIndex));
 			return;
 		}
 
 		if (key.return) {
 			const selected = visibleProjects[selectedIndex];
 			if (selected) {
+				onSelect(selected);
 				exit();
-				setImmediate(() => {
-					onSelect(selected);
-				});
 			}
 			return;
 		}
