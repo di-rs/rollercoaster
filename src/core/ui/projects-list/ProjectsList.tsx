@@ -135,7 +135,13 @@ function ProjectsList({ projects, onSelect }: Props) {
 		}
 
 		if (input === "G") {
-			const newPage = totalPages - 1;
+			if (totalPages <= 0 || filteredProjects.length === 0) {
+				setCurrentPage(0);
+				setSelectedIndex(0);
+				return;
+			}
+
+			const newPage = Math.max(0, totalPages - 1);
 			const newStartIndex = newPage * ITEMS_PER_PAGE;
 			const itemsOnLastPage = filteredProjects.length - newStartIndex;
 			const newSelectedIndex = Math.min(

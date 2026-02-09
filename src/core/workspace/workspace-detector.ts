@@ -264,6 +264,21 @@ async function listProjectsUsingCommand(
 					// Skip invalid JSON lines
 				}
 			}
+
+			// Add root project if not already included
+			const hasRoot = projects.some((p) => p.isRoot);
+			if (!hasRoot) {
+				const rootPackageJson = await parseJSON<PackageJson>(
+					join(dir, "package.json"),
+				);
+				if (rootPackageJson.name) {
+					projects.unshift({
+						name: rootPackageJson.name,
+						path: dir,
+						isRoot: true,
+					});
+				}
+			}
 		}
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : String(error);
