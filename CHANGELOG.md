@@ -1,5 +1,11 @@
 # @di-rs/rollercoaster
 
+## 1.3.0
+
+### Minor Changes
+
+- 58e2b89: Fixed build
+
 ## 1.2.1
 
 ### Patch Changes
