@@ -1,5 +1,11 @@
 # @di-rs/rollercoaster
 
+## 1.2.0
+
+### Minor Changes
+
+- 5e514f2: Migrate to standalone executables with bun build --compile. Package now ships as JS bundle for npm install, plus standalone executables for GitHub releases and Homebrew (no Node.js required).
+
 ## 1.1.0
 
 ### Minor Changes
