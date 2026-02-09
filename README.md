@@ -2,7 +2,7 @@
 
 > Run tasks/scripts without needing to know which package manager or task runner is being used. Roll through them like a rollercoaster!
 
-[![npm version](https://img.shields.io/npm/v/@di/rollercoaster.svg)](https://www.npmjs.com/package/@di/rollercoaster)
+[![npm version](https://img.shields.io/npm/v/@di-rs/rollercoaster.svg)](https://www.npmjs.com/package/@di-rs/rollercoaster)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A smart CLI tool that automatically detects and runs tasks from multiple sources (npm, pnpm, yarn, Taskfile) with a beautiful interactive interface, fuzzy search, and extensive keyboard shortcuts.
@@ -39,25 +39,25 @@ brew install rollercoaster
 ### Using npm
 
 ```sh
-npm install -g @di/rollercoaster
+npm install -g @di-rs/rollercoaster
 ```
 
 ### Using pnpm
 
 ```sh
-pnpm add -g @di/rollercoaster
+pnpm add -g @di-rs/rollercoaster
 ```
 
 ### Using yarn
 
 ```sh
-yarn global add @di/rollercoaster
+yarn global add @di-rs/rollercoaster
 ```
 
 ### Using bun
 
 ```sh
-bun add -g @di/rollercoaster
+bun add -g @di-rs/rollercoaster
 ```
 
 ### From source

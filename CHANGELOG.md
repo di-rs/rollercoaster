@@ -1,4 +1,10 @@
-# @di/rollercoaster
+# @di-rs/rollercoaster
+
+## 1.1.0
+
+### Minor Changes
+
+- 8f94ea0: Add Homebrew publishing support for macOS users. The package can now be installed via `brew tap di-rs/tap && brew install rollercoaster`.
 
 ## 1.0.0
 
