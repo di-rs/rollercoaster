@@ -1,3 +1,2 @@
-npm run lint
-npm run typecheck
-npm test -- --run
+export PATH="$HOME/.bun/bin:$PATH"
+bun run check

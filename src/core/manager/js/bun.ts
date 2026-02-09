@@ -1,26 +1,23 @@
 import type { JsWorkspace } from "../../../types/index.js";
 import { executeCommand } from "./utils.js";
 
-export class YarnWorkspace implements JsWorkspace {
-	constructor(
-		private version: string = "1",
-		private cwd?: string,
-	) {}
+export class BunWorkspace implements JsWorkspace {
+	constructor(private cwd?: string) {}
 
 	name(): string {
-		return `yarn@${this.version}`;
+		return "bun";
 	}
 
 	execName(): string {
-		return "yarn";
+		return "bunx";
 	}
 
 	async runScript(scriptName: string, args: string[] = []): Promise<void> {
-		await executeCommand("yarn", ["run", scriptName, ...args], this.cwd);
+		await executeCommand("bun", ["run", scriptName, ...args], this.cwd);
 	}
 
 	async installDeps(): Promise<void> {
-		await executeCommand("yarn", ["install"], this.cwd);
+		await executeCommand("bun", ["install"], this.cwd);
 	}
 
 	async addPackage(pkg: string, dev: boolean = false): Promise<void> {
@@ -28,14 +25,14 @@ export class YarnWorkspace implements JsWorkspace {
 		if (dev) {
 			args.push("--dev");
 		}
-		await executeCommand("yarn", args, this.cwd);
+		await executeCommand("bun", args, this.cwd);
 	}
 
 	async removePackage(pkg: string): Promise<void> {
-		await executeCommand("yarn", ["remove", pkg], this.cwd);
+		await executeCommand("bun", ["remove", pkg], this.cwd);
 	}
 
 	async executeCommand(command: string, args: string[] = []): Promise<void> {
-		await executeCommand("yarn", [command, ...args], this.cwd);
+		await executeCommand("bunx", [command, ...args], this.cwd);
 	}
 }

@@ -24,6 +24,7 @@ A smart CLI tool that automatically detects and runs tasks from multiple sources
 - **npm** - package.json scripts
 - **pnpm** - pnpm workspaces and scripts
 - **yarn** - yarn v1.x scripts
+- **bun** - bun package manager
 - **Task** - Taskfile.yml (go-task/task v3)
 
 ## 📦 Installation
@@ -46,6 +47,12 @@ pnpm add -g @di/rollercoaster
 yarn global add @di/rollercoaster
 ```
 
+### Using bun
+
+```sh
+bun add -g @di/rollercoaster
+```
+
 ### From source
 
 ```sh
@@ -54,13 +61,13 @@ git clone https://github.com/dmitriy-rs/rollercoaster
 cd rollercoaster
 
 # Install dependencies
-npm install
+bun install
 
 # Build
-npm run build
+bun run build
 
 # Install globally
-npm install -g .
+bun link
 ```
 
 ## 🚀 Usage
@@ -187,35 +194,40 @@ AutoSelectClosest = true
 ### Prerequisites
 
 - Node.js 20+
-- npm, pnpm, or yarn
+- [Bun](https://bun.sh) (recommended) or npm/pnpm/yarn
 
 ### Setup
 
 ```sh
 # Install dependencies
-npm install
+bun install
 
 # Run in development mode
-npm run dev
+bun run dev
 
 # Run tests
-npm test
+bun test
 
 # Run tests with coverage
-npm run test -- --coverage
+bun test --coverage
 
 # Build
-npm run build
+bun run build
 
 # Type check
-npm run typecheck
+bun run typecheck
 
 # Lint
-npm run lint
+bun run lint
 
 # Format
-npm run format
+bun run format
+
+# Check and fix (lint + format)
+bun run check
 ```
+
+> **Note**: This project uses Bun as the primary package manager. While npm/pnpm/yarn will work, Bun is recommended for the best experience.
 
 ### Project Structure
 
@@ -253,9 +265,9 @@ npm test
 
 ## 📖 Documentation
 
-- [UI Features](./UI_FEATURES.md) - Detailed UI feature documentation
-- [Migration Guide](./MIGRATION_GUIDE.md) - Go to TypeScript migration guide
-- [Current Functionality](./CURRENT_FUNCTIONALITY.md) - Complete feature documentation
+- [UI Features](./docs/UI_FEATURES.md) - Detailed UI feature documentation
+- [Migration Guide](./docs/MIGRATION_GUIDE.md) - Go to TypeScript migration guide
+- [Current Functionality](./docs/CURRENT_FUNCTIONALITY.md) - Complete feature documentation
 
 ## 🤝 Contributing
 
@@ -279,6 +291,7 @@ Built with:
 - [Fuse.js](https://fusejs.io/) - Fuzzy search
 - [Chalk](https://github.com/chalk/chalk) - Terminal styling
 - [tsdown](https://tsdown.vercel.app/) - TypeScript bundler
+- [Biome](https://biomejs.dev/) - Fast formatter and linter
 
 ## 🗺️ Roadmap
 
@@ -298,7 +311,8 @@ Built with:
 - [ ] Custom color themes
 - [ ] Task execution history
 - [ ] Multi-select for batch execution
-- [ ] Bun and Deno support
+- [x] Bun support
+- [ ] Deno support
 - [ ] Makefile support
 - [ ] Custom keybindings
 
