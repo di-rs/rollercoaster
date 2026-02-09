@@ -29,6 +29,13 @@ A smart CLI tool that automatically detects and runs tasks from multiple sources
 
 ## 📦 Installation
 
+### Using Homebrew (macOS)
+
+```sh
+brew tap di-rs/tap
+brew install rollercoaster
+```
+
 ### Using npm
 
 ```sh

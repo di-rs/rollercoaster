@@ -84,3 +84,48 @@ jobs:
             dist/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Homebrew tap
+        if: steps.check-changesets.outputs.has_changesets == 'true'
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
+        run: |
+          VERSION="${{ steps.get-version.outputs.version }}"
+          TARBALL_URL="https://registry.npmjs.org/@di/rollercoaster/-/rollercoaster-${VERSION}.tgz"
+          
+          # Download tarball to calculate SHA256
+          curl -sL "$TARBALL_URL" -o package.tgz
+          SHA256=$(shasum -a 256 package.tgz | awk '{print $1}')
+          
+          # Clone homebrew tap repo
+          git clone https://oauth2:${HOMEBREW_GITHUB_API_TOKEN}@github.com/di-rs/homebrew-tap.git tap
+          cd tap
+          
+          # Create or update formula
+          cat > Formula/rollercoaster.rb <<EOF
+          class Rollercoaster < Formula
+            desc "CLI tool for running tasks without knowing the package manager"
+            homepage "https://github.com/di-rs/rollercoaster"
+            url "$TARBALL_URL"
+            sha256 "$SHA256"
+            license "MIT"
+
+            depends_on "node"
+
+            def install
+              system "npm", "install", *std_npm_args
+              bin.install_symlink Dir["#{libexec}/bin/*"]
+            end
+
+            test do
+              system "#{bin}/rollercoaster", "--version"
+            end
+          end
+          EOF
+          
+          # Commit and push
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/rollercoaster.rb
+          git commit -m "rollercoaster ${VERSION}" || true
+          git push origin main || git push origin master
