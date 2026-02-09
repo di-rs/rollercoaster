@@ -18,7 +18,6 @@ export const npmConfig = {
 export const binaryConfigs = {
 	"macos-arm64": {
 		...baseConfig,
-		outdir: "./dist",
 		compile: {
 			target: "bun-darwin-arm64",
 			outfile: "./dist/rollercoaster-macos-arm64",
@@ -26,7 +25,6 @@ export const binaryConfigs = {
 	},
 	"macos-x64": {
 		...baseConfig,
-		outdir: "./dist",
 		compile: {
 			target: "bun-darwin-x64",
 			outfile: "./dist/rollercoaster-macos-x64",
@@ -34,7 +32,6 @@ export const binaryConfigs = {
 	},
 	"linux-x64": {
 		...baseConfig,
-		outdir: "./dist",
 		compile: {
 			target: "bun-linux-x64",
 			outfile: "./dist/rollercoaster-linux-x64",
