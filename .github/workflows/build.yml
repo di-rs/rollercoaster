@@ -85,9 +85,6 @@ jobs:
     - name: Build npm package
       run: bun run build
 
-    - name: Build standalone executable
-      run: bun run build:bin
-
     - name: Verify build outputs
       run: |
         if [ ! -f "dist/index.mjs" ]; then

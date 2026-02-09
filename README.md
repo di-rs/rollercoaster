@@ -105,9 +105,6 @@ bun install
 # Build npm package
 bun run build
 
-# Build standalone executable
-bun run build:bin
-
 # Install globally
 bun link
 ```
@@ -255,9 +252,6 @@ bun test --coverage
 
 # Build npm package (outputs to dist/index.mjs)
 bun run build
-
-# Build standalone executable for current platform
-bun run build:bin
 
 # Build for specific platforms
 bun run build:bin:macos-arm64  # Apple Silicon
