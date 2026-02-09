@@ -1,5 +1,11 @@
 # @di-rs/rollercoaster
 
+## 1.3.1
+
+### Patch Changes
+
+- d024db3: Fix release workflow to create tag only after successful GitHub release
+
 ## 1.3.0
 
 ### Minor Changes
