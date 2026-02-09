@@ -2,7 +2,7 @@
 
 > Run tasks/scripts without needing to know which package manager or task runner is being used. Roll through them like a rollercoaster!
 
-[![npm version](https://img.shields.io/npm/v/@di/rollercoaster.svg)](https://www.npmjs.com/package/@di/rollercoaster)
+[![npm version](https://img.shields.io/npm/v/@di-rs/rollercoaster.svg)](https://www.npmjs.com/package/@di-rs/rollercoaster)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A smart CLI tool that automatically detects and runs tasks from multiple sources (npm, pnpm, yarn, Taskfile) with a beautiful interactive interface, fuzzy search, and extensive keyboard shortcuts.
@@ -71,25 +71,25 @@ brew install rollercoaster
 ### Using npm
 
 ```sh
-npm install -g @di/rollercoaster
+npm install -g @di-rs/rollercoaster
 ```
 
 ### Using pnpm
 
 ```sh
-pnpm add -g @di/rollercoaster
+pnpm add -g @di-rs/rollercoaster
 ```
 
 ### Using yarn
 
 ```sh
-yarn global add @di/rollercoaster
+yarn global add @di-rs/rollercoaster
 ```
 
 ### Using bun
 
 ```sh
-bun add -g @di/rollercoaster
+bun add -g @di-rs/rollercoaster
 ```
 
 ### From source
@@ -195,7 +195,7 @@ r t            # Test
 │   dev [npm]      │  │ Name: build                    │
 │   lint [Task]    │  │                                │
 │                  │  │ Description:                   │
-╰──────────────────╯  │ Build the project with tsdown  │
+╰──────────────────╯  │ Build standalone executables with bun  │
                       │                                │
   Page 1/2 • 13 tasks │ Directory:                     │
                       │ /home/user/project             │
@@ -287,7 +287,6 @@ bun run check
 
 The project now uses `bun build --compile` to create standalone executables:
 
-- **npm package**: Built with `tsdown` for backwards compatibility (traditional installation via npm/pnpm/yarn)
 - **Standalone executables**: Built with `bun build --compile` for direct download and use
   - No runtime dependencies required
   - Includes Bun runtime embedded in the binary
@@ -330,9 +329,6 @@ npm test
 
 ## 📖 Documentation
 
-- [UI Features](./docs/UI_FEATURES.md) - Detailed UI feature documentation
-- [Migration Guide](./docs/MIGRATION_GUIDE.md) - Go to TypeScript migration guide
-- [Current Functionality](./docs/CURRENT_FUNCTIONALITY.md) - Complete feature documentation
 
 ## 🤝 Contributing
 
@@ -355,7 +351,6 @@ Built with:
 - [Commander.js](https://github.com/tj/commander.js) - CLI framework
 - [Fuse.js](https://fusejs.io/) - Fuzzy search
 - [Chalk](https://github.com/chalk/chalk) - Terminal styling
-- [tsdown](https://tsdown.vercel.app/) - TypeScript bundler
 - [Biome](https://biomejs.dev/) - Fast formatter and linter
 
 ## 🗺️ Roadmap

@@ -1,6 +1,6 @@
 {
-  "name": "@di/rollercoaster",
-  "version": "1.0.0",
+  "name": "@di-rs/rollercoaster",
+  "version": "1.1.0",
   "description": "CLI tool for running tasks without knowing the manager",
   "type": "module",
   "packageManager": "bun@1.1.0",
@@ -12,13 +12,11 @@
   ],
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "build": "tsdown src/index.ts",
-    "build:bin": "bun build --compile --minify --sourcemap --bytecode src/index.ts --outfile dist/rollercoaster",
     "build:bin:macos-arm64": "bun build --compile --minify --sourcemap --bytecode --target=bun-darwin-arm64 src/index.ts --outfile dist/rollercoaster-macos-arm64",
     "build:bin:macos-x64": "bun build --compile --minify --sourcemap --bytecode --target=bun-darwin-x64 src/index.ts --outfile dist/rollercoaster-macos-x64",
     "build:bin:linux-x64": "bun build --compile --minify --sourcemap --bytecode --target=bun-linux-x64 src/index.ts --outfile dist/rollercoaster-linux-x64",
     "build:bin:windows-x64": "bun build --compile --minify --sourcemap --bytecode --target=bun-windows-x64 src/index.ts --outfile dist/rollercoaster-windows-x64",
-    "build:all": "bun run build && bun run build:bin:macos-arm64 && bun run build:bin:macos-x64 && bun run build:bin:linux-x64 && bun run build:bin:windows-x64",
+    "build": "bun run build:bin:macos-arm64 && bun run build:bin:macos-x64 && bun run build:bin:linux-x64 && bun run build:bin:windows-x64",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "lint": "biome lint src",
@@ -59,7 +57,6 @@
     "@types/react": "^19.2.13",
     "@vitest/coverage-v8": "^4.0.18",
     "husky": "^9.1.7",
-    "tsdown": "^0.20.3",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
