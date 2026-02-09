@@ -74,7 +74,7 @@ jobs:
 
     - name: Install dependencies
       if: matrix.language == 'javascript-typescript'
-      run: bun install --frozen-lockfile
+      run: bun install
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
