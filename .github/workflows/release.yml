@@ -55,20 +55,22 @@ jobs:
           git commit -m "chore: version packages [skip ci]"
           git push
 
-      - name: Build npm package
+      - name: Build npm package (JS bundle)
         if: steps.check-changesets.outputs.has_changesets == 'true'
-        run: bun run build
+        run: bun run build:npm
 
-      - name: Build standalone executables for all platforms
+      - name: Build standalone executables for GitHub releases
+        if: steps.check-changesets.outputs.has_changesets == 'true'
+        run: bun run build:binaries
+          
+      - name: List build artifacts
         if: steps.check-changesets.outputs.has_changesets == 'true'
         run: |
-          bun run build:bin:macos-arm64
-          bun run build:bin:macos-x64
-          bun run build:bin:linux-x64
-          
-          # List built executables
-          echo "Built executables:"
-          ls -lh dist/
+          echo "npm bundle:"
+          ls -lh dist/index.js
+          echo ""
+          echo "Standalone executables:"
+          ls -lh dist/rollercoaster-*
 
       - name: Publish to npm
         if: steps.check-changesets.outputs.has_changesets == 'true'
