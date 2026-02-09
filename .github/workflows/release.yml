@@ -55,9 +55,20 @@ jobs:
           git commit -m "chore: version packages [skip ci]"
           git push
 
-      - name: Build
+      - name: Build npm package
         if: steps.check-changesets.outputs.has_changesets == 'true'
         run: bun run build
+
+      - name: Build standalone executables for all platforms
+        if: steps.check-changesets.outputs.has_changesets == 'true'
+        run: |
+          bun run build:bin:macos-arm64
+          bun run build:bin:macos-x64
+          bun run build:bin:linux-x64
+          
+          # List built executables
+          echo "Built executables:"
+          ls -lh dist/
 
       - name: Publish to npm
         if: steps.check-changesets.outputs.has_changesets == 'true'
@@ -82,7 +93,7 @@ jobs:
           tag_name: v${{ steps.get-version.outputs.version }}
           generate_release_notes: true
           files: |
-            dist/**/*
+            dist/rollercoaster-*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -92,30 +103,34 @@ jobs:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
         run: |
           VERSION="${{ steps.get-version.outputs.version }}"
-          TARBALL_URL="https://registry.npmjs.org/@di-rs/rollercoaster/-/rollercoaster-${VERSION}.tgz"
           
-          # Download tarball to calculate SHA256
-          curl -sL "$TARBALL_URL" -o package.tgz
-          SHA256=$(shasum -a 256 package.tgz | awk '{print $1}')
+          # Get SHA256 of both macOS binaries
+          SHA256_ARM64=$(shasum -a 256 dist/rollercoaster-macos-arm64 | awk '{print $1}')
+          SHA256_X64=$(shasum -a 256 dist/rollercoaster-macos-x64 | awk '{print $1}')
           
           # Clone homebrew tap repo
           git clone https://oauth2:${HOMEBREW_GITHUB_API_TOKEN}@github.com/di-rs/homebrew-tap.git tap
           cd tap
           
           # Create or update formula
-          cat > Formula/rollercoaster.rb <<EOF
+          cat > Formula/rollercoaster.rb <<'EOF'
           class Rollercoaster < Formula
             desc "CLI tool for running tasks without knowing the package manager"
             homepage "https://github.com/di-rs/rollercoaster"
-            url "$TARBALL_URL"
-            sha256 "$SHA256"
+            version "VERSION_PLACEHOLDER"
             license "MIT"
 
-            depends_on "node"
+            if Hardware::CPU.arm?
+              url "https://github.com/di-rs/rollercoaster/releases/download/vVERSION_PLACEHOLDER/rollercoaster-macos-arm64"
+              sha256 "SHA256_ARM64_PLACEHOLDER"
+            else
+              url "https://github.com/di-rs/rollercoaster/releases/download/vVERSION_PLACEHOLDER/rollercoaster-macos-x64"
+              sha256 "SHA256_X64_PLACEHOLDER"
+            end
 
             def install
-              system "npm", "install", *std_npm_args
-              bin.install_symlink Dir["#{libexec}/bin/*"]
+              bin.install "rollercoaster-macos-arm64" => "rollercoaster" if Hardware::CPU.arm?
+              bin.install "rollercoaster-macos-x64" => "rollercoaster" if Hardware::CPU.intel?
             end
 
             test do
@@ -123,6 +138,12 @@ jobs:
             end
           end
           EOF
+          
+          # Replace placeholders
+          sed -i.bak "s/VERSION_PLACEHOLDER/${VERSION}/g" Formula/rollercoaster.rb
+          sed -i.bak "s/SHA256_ARM64_PLACEHOLDER/${SHA256_ARM64}/g" Formula/rollercoaster.rb
+          sed -i.bak "s/SHA256_X64_PLACEHOLDER/${SHA256_X64}/g" Formula/rollercoaster.rb
+          rm Formula/rollercoaster.rb.bak
           
           # Commit and push
           git config user.name "github-actions[bot]"

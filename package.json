@@ -4,15 +4,25 @@
   "description": "CLI tool for running tasks without knowing the manager",
   "type": "module",
   "packageManager": "bun@1.1.0",
-  "bin": {
-    "rollercoaster": "./dist/index.mjs"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/di-rs/rollercoaster.git"
   },
+  "homepage": "https://github.com/di-rs/rollercoaster",
+  "bugs": {
+    "url": "https://github.com/di-rs/rollercoaster/issues"
+  },
+  "author": "Dima Portish",
+  "license": "MIT",
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "tsdown --watch src/index.ts",
-    "build": "tsdown src/index.ts",
+    "dev": "bun run --watch src/index.ts",
+    "build:bin:macos-arm64": "bun build --compile --minify --define process.env.NODE_ENV='\"production\"' --external react-devtools-core --target=bun-darwin-arm64 src/index.ts --outfile dist/rollercoaster-macos-arm64",
+    "build:bin:macos-x64": "bun build --compile --minify --define process.env.NODE_ENV='\"production\"' --external react-devtools-core --target=bun-darwin-x64 src/index.ts --outfile dist/rollercoaster-macos-x64",
+    "build:bin:linux-x64": "bun build --compile --minify --define process.env.NODE_ENV='\"production\"' --external react-devtools-core --target=bun-linux-x64 src/index.ts --outfile dist/rollercoaster-linux-x64",
+    "build": "bun run build:bin:macos-arm64 && bun run build:bin:macos-x64 && bun run build:bin:linux-x64",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "lint": "biome lint src",
@@ -34,8 +44,6 @@
     "task",
     "fuzzy-search"
   ],
-  "author": "dmitriy-rs",
-  "license": "MIT",
   "dependencies": {
     "chalk": "^5.6.2",
     "commander": "^14.0.3",
@@ -53,7 +61,6 @@
     "@types/react": "^19.2.13",
     "@vitest/coverage-v8": "^4.0.18",
     "husky": "^9.1.7",
-    "tsdown": "^0.20.3",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
