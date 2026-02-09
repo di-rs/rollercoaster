@@ -152,8 +152,9 @@ async function listWorkspaceProjects(
 			return projects;
 		}
 	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
 		Logger.debug(
-			`Failed to list projects using ${packageManager} command: ${(error as Error).message}, falling back to manual parsing`,
+			`Failed to list projects using ${packageManager} command: ${errorMessage}, falling back to manual parsing`,
 		);
 	}
 
@@ -173,7 +174,10 @@ async function listProjectsUsingCommand(
 	try {
 		if (packageManager === "npm") {
 			// npm query .workspace returns workspace packages
-			const { stdout } = await execAsync("npm query .workspace", { cwd: dir });
+			const { stdout } = await execAsync("npm query .workspace", {
+				cwd: dir,
+				timeout: 10000,
+			});
 			const result = JSON.parse(stdout);
 
 			if (Array.isArray(result)) {
@@ -192,6 +196,7 @@ async function listProjectsUsingCommand(
 			// pnpm list -r --depth -1 --json lists all workspace packages
 			const { stdout } = await execAsync("pnpm list -r --depth -1 --json", {
 				cwd: dir,
+				timeout: 10000,
 			});
 			const result = JSON.parse(stdout);
 
@@ -225,6 +230,7 @@ async function listProjectsUsingCommand(
 			// yarn workspaces list --json lists all workspaces
 			const { stdout } = await execAsync("yarn workspaces list --json", {
 				cwd: dir,
+				timeout: 10000,
 			});
 			const lines = stdout.trim().split("\n");
 
@@ -245,9 +251,8 @@ async function listProjectsUsingCommand(
 			}
 		}
 	} catch (error) {
-		Logger.debug(
-			`Error executing ${packageManager} command: ${(error as Error).message}`,
-		);
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		Logger.debug(`Error executing ${packageManager} command: ${errorMessage}`);
 		throw error;
 	}
 
@@ -290,7 +295,10 @@ async function listProjectsManually(
 				}
 			}
 		} catch (error) {
-			Logger.error(`Failed to parse pnpm-workspace.yaml`, error as Error);
+			Logger.error(
+				`Failed to parse pnpm-workspace.yaml`,
+				error instanceof Error ? error : new Error(String(error)),
+			);
 		}
 	} else {
 		// Parse workspaces from package.json
@@ -360,9 +368,9 @@ async function findProjectsByPattern(
 							});
 						}
 					} catch (error) {
-						Logger.debug(
-							`Failed to parse ${packageJsonPath}: ${(error as Error).message}`,
-						);
+						const errorMessage =
+							error instanceof Error ? error.message : String(error);
+						Logger.debug(`Failed to parse ${packageJsonPath}: ${errorMessage}`);
 					}
 				}
 			}

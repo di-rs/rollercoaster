@@ -32,6 +32,7 @@ function ProjectsList({ projects, onSelect }: Props) {
 	);
 	const visibleProjects = filteredProjects.slice(startIndex, endIndex);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: We intentionally want to reset page when filter changes
 	useEffect(() => {
 		// Reset to first page when filter changes
 		setCurrentPage(0);
