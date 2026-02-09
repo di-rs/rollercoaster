@@ -87,15 +87,29 @@ jobs:
 
     - name: Verify build outputs
       run: |
-        if [ ! -f "dist/index.mjs" ]; then
-          echo "Build failed: dist/index.mjs not found"
+        echo "Checking for built executables..."
+        
+        if [ ! -f "dist/rollercoaster-macos-arm64" ]; then
+          echo "Build failed: dist/rollercoaster-macos-arm64 not found"
           exit 1
         fi
-        if [ ! -f "dist/rollercoaster" ]; then
-          echo "Build failed: dist/rollercoaster executable not found"
+        
+        if [ ! -f "dist/rollercoaster-macos-x64" ]; then
+          echo "Build failed: dist/rollercoaster-macos-x64 not found"
           exit 1
         fi
-        echo "Build successful!"
+        
+        if [ ! -f "dist/rollercoaster-linux-x64" ]; then
+          echo "Build failed: dist/rollercoaster-linux-x64 not found"
+          exit 1
+        fi
+        
+        if [ ! -f "dist/rollercoaster-windows-x64" ]; then
+          echo "Build failed: dist/rollercoaster-windows-x64 not found"
+          exit 1
+        fi
+        
+        echo "Build successful! All executables created:"
         ls -lh dist/
 
     - name: Upload build artifacts
