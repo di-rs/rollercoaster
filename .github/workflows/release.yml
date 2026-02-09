@@ -45,16 +45,6 @@ jobs:
             echo "has_changesets=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Version packages
-        if: steps.check-changesets.outputs.has_changesets == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          bun run version
-          git add .
-          git commit -m "chore: version packages [skip ci]"
-          git push
-
       - name: Build npm package (JS bundle)
         if: steps.check-changesets.outputs.has_changesets == 'true'
         run: bun run build:npm
@@ -79,14 +69,21 @@ jobs:
         # See: https://docs.npmjs.com/trusted-publishers/
         run: bun run release
 
-      - name: Get version and create tag
+      - name: Version packages and create tag
         if: steps.check-changesets.outputs.has_changesets == 'true'
         id: get-version
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          bun run version
+          git add .
+          git commit -m "chore: version packages [skip ci]"
+          
           VERSION=$(node -p "require('./package.json').version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          
           git tag -a "v$VERSION" -m "Release v$VERSION"
-          git push origin "v$VERSION"
+          git push origin HEAD --tags
 
       - name: Create GitHub Release
         if: steps.check-changesets.outputs.has_changesets == 'true'
