@@ -5,6 +5,7 @@ import { parseJSON, fileExists } from '../config-file/config-file.js'
 import { NpmWorkspace } from './npm.js'
 import { PnpmWorkspace } from './pnpm.js'
 import { YarnWorkspace } from './yarn.js'
+import { BunWorkspace } from './bun.js'
 import { createTask } from '../../task/task.js'
 import { Logger } from '../../logger/logger.js'
 
@@ -21,13 +22,16 @@ export class JsManager implements Manager {
   }
 
   private detectWorkspace(defaultManager: string): JsWorkspace {
+    const bunLockPath = join(this.directory, 'bun.lockb')
     const pnpmLockPath = join(this.directory, 'pnpm-lock.yaml')
     const yarnLockPath = join(this.directory, 'yarn.lock')
     const npmLockPath = join(this.directory, 'package-lock.json')
 
     // Synchronous check for simplicity in constructor
     try {
-      if (existsSync(pnpmLockPath)) {
+      if (existsSync(bunLockPath)) {
+        return new BunWorkspace(this.directory)
+      } else if (existsSync(pnpmLockPath)) {
         // Try to detect pnpm version from lockfile
         return new PnpmWorkspace('9+', this.directory)
       } else if (existsSync(yarnLockPath)) {
@@ -41,6 +45,8 @@ export class JsManager implements Manager {
 
     // No lock file, use default
     switch (defaultManager) {
+      case 'bun':
+        return new BunWorkspace(this.directory)
       case 'pnpm':
         return new PnpmWorkspace('9+', this.directory)
       case 'yarn':

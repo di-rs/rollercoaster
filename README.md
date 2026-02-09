@@ -24,6 +24,7 @@ A smart CLI tool that automatically detects and runs tasks from multiple sources
 - **npm** - package.json scripts
 - **pnpm** - pnpm workspaces and scripts
 - **yarn** - yarn v1.x scripts
+- **bun** - bun package manager
 - **Task** - Taskfile.yml (go-task/task v3)
 
 ## 📦 Installation
@@ -44,6 +45,12 @@ pnpm add -g @di/rollercoaster
 
 ```sh
 yarn global add @di/rollercoaster
+```
+
+### Using bun
+
+```sh
+bun add -g @di/rollercoaster
 ```
 
 ### From source
@@ -298,7 +305,8 @@ Built with:
 - [ ] Custom color themes
 - [ ] Task execution history
 - [ ] Multi-select for batch execution
-- [ ] Bun and Deno support
+- [x] Bun support
+- [ ] Deno support
 - [ ] Makefile support
 - [ ] Custom keybindings
 

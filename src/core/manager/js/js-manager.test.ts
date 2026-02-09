@@ -54,6 +54,14 @@ describe('JsManager', () => {
       expect(title.name).toBe('npm')
     })
 
+    it('should detect bun from lock file', async () => {
+      await writeFile(join(testDir, 'bun.lockb'), '')
+      const manager = new JsManager(testDir, 'npm')
+      const title = manager.getTitle()
+
+      expect(title.name).toBe('bun')
+    })
+
     it('should use default manager when no lock file', async () => {
       const manager = new JsManager(testDir, 'pnpm')
       const title = manager.getTitle()
