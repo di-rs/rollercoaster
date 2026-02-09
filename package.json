@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "CLI tool for running tasks without knowing the manager",
   "type": "module",
+  "packageManager": "bun@1.1.0",
   "bin": {
     "rollercoaster": "./dist/index.mjs"
   },
@@ -16,7 +17,7 @@
     "typecheck": "tsc --noEmit",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "npm run build && changeset publish"
+    "release": "bun run build && changeset publish"
   },
   "keywords": [
     "cli",
@@ -24,6 +25,7 @@
     "npm",
     "yarn",
     "pnpm",
+    "bun",
     "task",
     "fuzzy-search"
   ],
