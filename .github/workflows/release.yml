@@ -65,7 +65,6 @@ jobs:
           bun run build:bin:macos-arm64
           bun run build:bin:macos-x64
           bun run build:bin:linux-x64
-          bun run build:bin:windows-x64
           
           # List built executables
           echo "Built executables:"

@@ -104,11 +104,6 @@ jobs:
           exit 1
         fi
         
-        if [ ! -f "dist/rollercoaster-windows-x64" ]; then
-          echo "Build failed: dist/rollercoaster-windows-x64 not found"
-          exit 1
-        fi
-        
         echo "Build successful! All executables created:"
         ls -lh dist/
 
