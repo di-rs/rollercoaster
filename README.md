@@ -329,6 +329,7 @@ npm test
 
 ## 📖 Documentation
 
+- [UI Features](./docs/UI_FEATURES.md) - Detailed UI feature documentation
 
 ## 🤝 Contributing
 
