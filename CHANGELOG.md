@@ -1,5 +1,11 @@
 # @di-rs/rollercoaster
 
+## 1.2.1
+
+### Patch Changes
+
+- ede7a36: Fix release workflow to only version and commit after successful npm publish. Prevents version bumps when publish fails.
+
 ## 1.2.0
 
 ### Minor Changes
