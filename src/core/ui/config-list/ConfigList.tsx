@@ -40,6 +40,27 @@ function ConfigList() {
 	const [showHelp, setShowHelp] = useState(false);
 	const { exit } = useApp();
 
+	const updateSelectValue = (
+		option: (typeof configOptions)[number],
+		direction: "up" | "down",
+	) => {
+		if (option.type === "select" && option.options) {
+			const currentValue = config[option.key] as string;
+			const currentIndex = option.options.indexOf(currentValue);
+			const newIndex =
+				direction === "up"
+					? Math.max(0, currentIndex - 1)
+					: Math.min(option.options.length - 1, currentIndex + 1);
+			const newValue = option.options[newIndex];
+			const newConfig = {
+				...config,
+				[option.key]: newValue,
+			};
+			setConfig(newConfig);
+			configManager.set({ [option.key]: newValue });
+		}
+	};
+
 	useInput((input, key) => {
 		// Help toggle
 		if (input === "?") {
@@ -102,33 +123,13 @@ function ConfigList() {
 			}
 
 			if (option.type === "select" && option.options) {
-				const currentValue = config[option.key] as string;
-				const currentIndex = option.options.indexOf(currentValue);
-
 				if (key.upArrow || input === "k") {
-					const newIndex = Math.max(0, currentIndex - 1);
-					const newValue = option.options[newIndex];
-					const newConfig = {
-						...config,
-						[option.key]: newValue,
-					};
-					setConfig(newConfig);
-					configManager.set({ [option.key]: newValue });
+					updateSelectValue(option, "up");
 					return;
 				}
 
 				if (key.downArrow || input === "j") {
-					const newIndex = Math.min(
-						option.options.length - 1,
-						currentIndex + 1,
-					);
-					const newValue = option.options[newIndex];
-					const newConfig = {
-						...config,
-						[option.key]: newValue,
-					};
-					setConfig(newConfig);
-					configManager.set({ [option.key]: newValue });
+					updateSelectValue(option, "down");
 					return;
 				}
 
