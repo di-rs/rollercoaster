@@ -9,7 +9,9 @@ import {
 } from "../core/manager/manager.js";
 import { parseManagers } from "../core/manager/parser/parser.js";
 import { renderConfigList } from "../core/ui/config-list/ConfigList.js";
+import { renderProjectsList } from "../core/ui/projects-list/ProjectsList.js";
 import { renderTasksList } from "../core/ui/tasks-list/TasksList.js";
+import { detectWorkspace } from "../core/workspace/workspace-detector.js";
 import type { Manager, ManagerTask } from "../types/index.js";
 
 export async function createRootCommand(): Promise<Command> {
@@ -81,14 +83,56 @@ async function executeCommand(
 }
 
 async function executeWithoutArgs(managers: Manager[]): Promise<void> {
-	const tasks = await getAllManagerTasks(managers);
+	// Check if current directory is a workspace
+	const workspaceInfo = await detectWorkspace(process.cwd());
 
-	if (tasks.length === 0) {
-		Logger.info("No tasks found");
-		return;
+	if (workspaceInfo.isWorkspace && workspaceInfo.projects.length > 0) {
+		Logger.debug(
+			`Found workspace with ${workspaceInfo.projects.length} projects`,
+		);
+
+		// Show project selection screen
+		const selectedProject = await renderProjectsList(workspaceInfo.projects);
+
+		if (!selectedProject) {
+			Logger.info("No project selected");
+			return;
+		}
+
+		Logger.debug(
+			`Selected project: ${selectedProject.name} at ${selectedProject.path}`,
+		);
+
+		// Parse managers for the selected project
+		const projectManagers = await parseManagers(selectedProject.path, {
+			defaultJSManager: configManager.get().defaultJSManager,
+		});
+
+		if (projectManagers.length === 0) {
+			Logger.info(`No managers found in project: ${selectedProject.name}`);
+			return;
+		}
+
+		// Show tasks for the selected project
+		const projectTasks = await getAllManagerTasks(projectManagers);
+
+		if (projectTasks.length === 0) {
+			Logger.info(`No tasks found in project: ${selectedProject.name}`);
+			return;
+		}
+
+		await renderTasksList(projectTasks, "");
+	} else {
+		// Not a workspace, show all tasks from all managers
+		const tasks = await getAllManagerTasks(managers);
+
+		if (tasks.length === 0) {
+			Logger.info("No tasks found");
+			return;
+		}
+
+		await renderTasksList(tasks, "");
 	}
-
-	await renderTasksList(tasks, "");
 }
 
 async function executeWithArgs(

@@ -73,3 +73,9 @@ export interface TaskfileInclude {
 	dir?: string;
 	optional?: boolean;
 }
+
+export interface WorkspaceProject {
+	name: string;
+	path: string;
+	isRoot: boolean;
+}
