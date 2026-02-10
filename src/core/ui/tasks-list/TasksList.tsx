@@ -66,7 +66,42 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 			}
 
 			if (key.return) {
-				setIsFiltering(false);
+				// Execute the currently highlighted task
+				const selected = visibleTasks[selectedIndex];
+				if (selected) {
+					exit();
+					setImmediate(async () => {
+						try {
+							await executeSingleTask(selected);
+						} catch (error) {
+							Logger.error("Failed to execute task", error as Error);
+							process.exit(1);
+						}
+					});
+				} else {
+					setIsFiltering(false);
+				}
+				return;
+			}
+
+			// Arrow navigation works in filter mode too
+			if (key.upArrow) {
+				if (selectedIndex > 0) {
+					setSelectedIndex(selectedIndex - 1);
+				} else if (currentPage > 0) {
+					setCurrentPage(currentPage - 1);
+					setSelectedIndex(ITEMS_PER_PAGE - 1);
+				}
+				return;
+			}
+
+			if (key.downArrow) {
+				if (selectedIndex < visibleTasks.length - 1) {
+					setSelectedIndex(selectedIndex + 1);
+				} else if (currentPage < totalPages - 1) {
+					setCurrentPage(currentPage + 1);
+					setSelectedIndex(0);
+				}
 				return;
 			}
 
@@ -185,12 +220,15 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 
 	const currentTask = visibleTasks[selectedIndex];
 
+	// Accent color: steel blue — visible but not garish
+	const ACCENT = "#4A86C8";
+
 	return (
 		<Box flexDirection="column" padding={1}>
 			{/* Header with title */}
-			<Box marginBottom={1} borderStyle="round" borderColor="white" padding={1}>
+			<Box marginBottom={1} borderStyle="round" borderColor={ACCENT} padding={1}>
 				<Box flexDirection="column" width="100%">
-					<Text bold>🎢 Rollercoaster Task Runner</Text>
+					<Text bold color={ACCENT}>🎢 Rollercoaster Task Runner</Text>
 					{currentTask && (
 						<Box marginTop={1}>
 							<Text dimColor>Manager: </Text>
@@ -234,15 +272,12 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 										<Box key={`${task.task.name}-${i}`} paddingY={0}>
 											<Text
 												bold={isSelected}
-												inverse={isSelected}
+												color={isSelected ? ACCENT : undefined}
 											>
 												{isSelected ? "❯ " : "  "}
 												{taskName}
 												{managerName && (
-													<Text dimColor={!isSelected}>
-														{" "}
-														{managerName}
-													</Text>
+													<Text dimColor={!isSelected}> {managerName}</Text>
 												)}
 											</Text>
 										</Box>
@@ -268,11 +303,11 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 					<Box
 						flexDirection="column"
 						borderStyle="round"
-						borderColor="white"
+						borderColor={ACCENT}
 						paddingX={1}
 						width={40}
 					>
-						<Text bold>Task Details</Text>
+						<Text bold color={ACCENT}>Task Details</Text>
 						<Box marginTop={1} flexDirection="column">
 							<Box>
 								<Text bold>Name: </Text>
@@ -291,9 +326,7 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 							{currentTask.task.directory && (
 								<Box marginTop={1} flexDirection="column">
 									<Text bold>Directory:</Text>
-									<Text dimColor>
-										{currentTask.task.directory}
-									</Text>
+									<Text dimColor>{currentTask.task.directory}</Text>
 								</Box>
 							)}
 
@@ -308,22 +341,17 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 
 			{/* Filter input */}
 			{isFiltering && (
-				<Box
-					marginTop={1}
-					borderStyle="round"
-					borderColor="white"
-					paddingX={1}
-				>
-					<Text>/ </Text>
+				<Box marginTop={1} borderStyle="round" borderColor={ACCENT} paddingX={1}>
+					<Text color={ACCENT}>/ </Text>
 					<Text>{filter}</Text>
-					<Text>█</Text>
+					<Text color={ACCENT}>█</Text>
 				</Box>
 			)}
 
 			{/* Active filter indicator */}
 			{!isFiltering && filter && (
 				<Box marginTop={1} paddingX={1}>
-					<Text>Filter: </Text>
+					<Text color={ACCENT}>Filter: </Text>
 					<Text bold>{filter}</Text>
 					<Text dimColor> (press 'c' to clear)</Text>
 				</Box>
@@ -333,16 +361,14 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 			<Box
 				marginTop={1}
 				borderStyle="single"
-				borderColor="white"
+				borderColor={ACCENT}
 				paddingX={1}
 				justifyContent="space-between"
 			>
-				<Text dimColor>
+				<Text color={ACCENT}>
 					{filteredTasks.length} / {tasks.length} tasks
 				</Text>
-				<Text dimColor>
-					Press ? for help
-				</Text>
+				<Text dimColor>Press ? for help</Text>
 			</Box>
 		</Box>
 	);
@@ -364,49 +390,79 @@ function highlightMatch(text: string, filter: string): string {
 	return `${before}${chalk.bgYellow.black(match)}${after}`;
 }
 
+const ACCENT = "#4A86C8";
+
 function HelpPanel({ onClose: _onClose }: { onClose: () => void }) {
 	return (
 		<Box flexDirection="column" padding={2}>
 			<Box
 				flexDirection="column"
 				borderStyle="round"
-				borderColor="white"
+				borderColor={ACCENT}
 				paddingX={2}
 				paddingY={1}
 			>
-				<Text bold underline>
+				<Text bold underline color={ACCENT}>
 					🎢 Rollercoaster - Keyboard Shortcuts
 				</Text>
 
 				<Box marginTop={1} flexDirection="column">
 					<Text bold>Navigation:</Text>
 					<Box paddingLeft={2} flexDirection="column">
-						<Text><Text bold>↑/k</Text> - Move up</Text>
-						<Text><Text bold>↓/j</Text> - Move down</Text>
-						<Text><Text bold>←/h</Text> - Previous page</Text>
-						<Text><Text bold>→/l</Text> - Next page</Text>
-						<Text><Text bold>g</Text> - Jump to first task</Text>
-						<Text><Text bold>G</Text> - Jump to last task</Text>
+						<Text>
+							<Text bold>↑/k</Text> - Move up
+						</Text>
+						<Text>
+							<Text bold>↓/j</Text> - Move down
+						</Text>
+						<Text>
+							<Text bold>←/h</Text> - Previous page
+						</Text>
+						<Text>
+							<Text bold>→/l</Text> - Next page
+						</Text>
+						<Text>
+							<Text bold>g</Text> - Jump to first task
+						</Text>
+						<Text>
+							<Text bold>G</Text> - Jump to last task
+						</Text>
 					</Box>
 				</Box>
 
 				<Box marginTop={1} flexDirection="column">
 					<Text bold>Search & Filter:</Text>
 					<Box paddingLeft={2} flexDirection="column">
-						<Text><Text bold>/</Text> - Start filtering</Text>
-						<Text><Text bold>ESC</Text> - Exit filter mode / Clear filter</Text>
-						<Text><Text bold>c</Text> - Clear active filter</Text>
-						<Text><Text bold>Enter</Text> - Confirm filter / Execute task</Text>
+						<Text>
+							<Text bold>/</Text> - Start filtering
+						</Text>
+						<Text>
+							<Text bold>ESC</Text> - Exit filter mode / Clear filter
+						</Text>
+						<Text>
+							<Text bold>c</Text> - Clear active filter
+						</Text>
+						<Text>
+							<Text bold>Enter</Text> - Confirm filter / Execute task
+						</Text>
 					</Box>
 				</Box>
 
 				<Box marginTop={1} flexDirection="column">
 					<Text bold>Actions:</Text>
 					<Box paddingLeft={2} flexDirection="column">
-						<Text><Text bold>Enter</Text> - Execute selected task</Text>
-						<Text><Text bold>v</Text> - Toggle view mode</Text>
-						<Text><Text bold>?</Text> - Toggle this help</Text>
-						<Text><Text bold>q/ESC</Text> - Quit</Text>
+						<Text>
+							<Text bold>Enter</Text> - Execute selected task
+						</Text>
+						<Text>
+							<Text bold>v</Text> - Toggle view mode
+						</Text>
+						<Text>
+							<Text bold>?</Text> - Toggle this help
+						</Text>
+						<Text>
+							<Text bold>q/ESC</Text> - Quit
+						</Text>
 					</Box>
 				</Box>
 
