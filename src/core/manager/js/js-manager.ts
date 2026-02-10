@@ -29,13 +29,14 @@ export class JsManager implements Manager {
 
 	private detectWorkspace(defaultManager: string): JsWorkspace {
 		const bunLockPath = join(this.directory, "bun.lockb");
+		const bunTextLockPath = join(this.directory, "bun.lock");
 		const pnpmLockPath = join(this.directory, "pnpm-lock.yaml");
 		const yarnLockPath = join(this.directory, "yarn.lock");
 		const npmLockPath = join(this.directory, "package-lock.json");
 
 		// Synchronous check for simplicity in constructor
 		try {
-			if (existsSync(bunLockPath)) {
+			if (existsSync(bunLockPath) || existsSync(bunTextLockPath)) {
 				return new BunWorkspace(this.directory);
 			} else if (existsSync(pnpmLockPath)) {
 				// Try to detect pnpm version from lockfile

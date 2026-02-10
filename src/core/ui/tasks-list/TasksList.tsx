@@ -15,7 +15,7 @@ const ITEMS_PER_PAGE = 10;
 function TasksList({ tasks, initialFilter = "" }: Props) {
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [filter, setFilter] = useState(initialFilter);
-	const [isFiltering, setIsFiltering] = useState(!!initialFilter);
+	const [isFiltering, setIsFiltering] = useState(true);
 	const [showHelp, setShowHelp] = useState(false);
 	const [currentPage, setCurrentPage] = useState(0);
 	const [viewMode, setViewMode] = useState<"list" | "grouped">("list");
@@ -188,21 +188,15 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 	return (
 		<Box flexDirection="column" padding={1}>
 			{/* Header with title */}
-			<Box marginBottom={1} borderStyle="round" borderColor="cyan" padding={1}>
+			<Box marginBottom={1} borderStyle="round" borderColor="white" padding={1}>
 				<Box flexDirection="column" width="100%">
-					<Text bold color="cyan">
-						🎢 Rollercoaster Task Runner
-					</Text>
+					<Text bold>🎢 Rollercoaster Task Runner</Text>
 					{currentTask && (
 						<Box marginTop={1}>
 							<Text dimColor>Manager: </Text>
-							<Text bold color="yellow">
-								{currentTask.manager.getTitle().name}
-							</Text>
+							<Text bold>{currentTask.manager.getTitle().name}</Text>
 							<Text dimColor> • </Text>
-							<Text color="gray">
-								{currentTask.manager.getTitle().description}
-							</Text>
+							<Text dimColor>{currentTask.manager.getTitle().description}</Text>
 						</Box>
 					)}
 				</Box>
@@ -215,18 +209,18 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 					{filteredTasks.length === 0 ? (
 						<Box
 							borderStyle="round"
-							borderColor="yellow"
+							borderColor="white"
 							padding={1}
 							justifyContent="center"
 						>
-							<Text color="yellow">⚠ No tasks found</Text>
+							<Text dimColor>No tasks found</Text>
 						</Box>
 					) : (
 						<>
 							<Box
 								flexDirection="column"
 								borderStyle="round"
-								borderColor="green"
+								borderColor="white"
 								paddingX={1}
 							>
 								{visibleTasks.map((task, i) => {
@@ -239,14 +233,13 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 									return (
 										<Box key={`${task.task.name}-${i}`} paddingY={0}>
 											<Text
-												color={isSelected ? "cyan" : "white"}
 												bold={isSelected}
-												backgroundColor={isSelected ? "blue" : undefined}
+												inverse={isSelected}
 											>
 												{isSelected ? "❯ " : "  "}
 												{taskName}
 												{managerName && (
-													<Text color={isSelected ? "white" : "gray"}>
+													<Text dimColor={!isSelected}>
 														{" "}
 														{managerName}
 													</Text>
@@ -260,7 +253,7 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 							{/* Pagination info */}
 							{totalPages > 1 && (
 								<Box marginTop={1} justifyContent="center">
-									<Text color="gray">
+									<Text dimColor>
 										Page {currentPage + 1}/{totalPages} • {filteredTasks.length}{" "}
 										tasks
 									</Text>
@@ -275,27 +268,21 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 					<Box
 						flexDirection="column"
 						borderStyle="round"
-						borderColor="magenta"
+						borderColor="white"
 						paddingX={1}
 						width={40}
 					>
-						<Text bold color="magenta">
-							📋 Task Details
-						</Text>
+						<Text bold>Task Details</Text>
 						<Box marginTop={1} flexDirection="column">
 							<Box>
-								<Text bold color="cyan">
-									Name:{" "}
-								</Text>
+								<Text bold>Name: </Text>
 								<Text>{currentTask.task.name}</Text>
 							</Box>
 
 							{currentTask.task.description && (
 								<Box marginTop={1} flexDirection="column">
-									<Text bold color="cyan">
-										Description:
-									</Text>
-									<Text color="gray" wrap="wrap">
+									<Text bold>Description:</Text>
+									<Text dimColor wrap="wrap">
 										{currentTask.task.description}
 									</Text>
 								</Box>
@@ -303,22 +290,16 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 
 							{currentTask.task.directory && (
 								<Box marginTop={1} flexDirection="column">
-									<Text bold color="cyan">
-										Directory:
-									</Text>
-									<Text color="gray" dimColor>
+									<Text bold>Directory:</Text>
+									<Text dimColor>
 										{currentTask.task.directory}
 									</Text>
 								</Box>
 							)}
 
 							<Box marginTop={1}>
-								<Text bold color="cyan">
-									Manager:{" "}
-								</Text>
-								<Text color="yellow">
-									{currentTask.manager.getTitle().name}
-								</Text>
+								<Text bold>Manager: </Text>
+								<Text>{currentTask.manager.getTitle().name}</Text>
 							</Box>
 						</Box>
 					</Box>
@@ -330,22 +311,20 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 				<Box
 					marginTop={1}
 					borderStyle="round"
-					borderColor="yellow"
+					borderColor="white"
 					paddingX={1}
 				>
-					<Text color="yellow">🔍 Filter: </Text>
+					<Text>/ </Text>
 					<Text>{filter}</Text>
-					<Text color="yellow">█</Text>
+					<Text>█</Text>
 				</Box>
 			)}
 
 			{/* Active filter indicator */}
 			{!isFiltering && filter && (
 				<Box marginTop={1} paddingX={1}>
-					<Text color="green">✓ Filter active: </Text>
-					<Text bold color="white">
-						{filter}
-					</Text>
+					<Text>Filter: </Text>
+					<Text bold>{filter}</Text>
 					<Text dimColor> (press 'c' to clear)</Text>
 				</Box>
 			)}
@@ -354,14 +333,14 @@ function TasksList({ tasks, initialFilter = "" }: Props) {
 			<Box
 				marginTop={1}
 				borderStyle="single"
-				borderColor="blue"
+				borderColor="white"
 				paddingX={1}
 				justifyContent="space-between"
 			>
-				<Text color="blue">
+				<Text dimColor>
 					{filteredTasks.length} / {tasks.length} tasks
 				</Text>
-				<Text color="gray" dimColor>
+				<Text dimColor>
 					Press ? for help
 				</Text>
 			</Box>
@@ -390,78 +369,44 @@ function HelpPanel({ onClose: _onClose }: { onClose: () => void }) {
 		<Box flexDirection="column" padding={2}>
 			<Box
 				flexDirection="column"
-				borderStyle="double"
-				borderColor="cyan"
+				borderStyle="round"
+				borderColor="white"
 				paddingX={2}
 				paddingY={1}
 			>
-				<Text bold color="cyan" underline>
+				<Text bold underline>
 					🎢 Rollercoaster - Keyboard Shortcuts
 				</Text>
 
 				<Box marginTop={1} flexDirection="column">
-					<Text bold color="yellow">
-						Navigation:
-					</Text>
+					<Text bold>Navigation:</Text>
 					<Box paddingLeft={2} flexDirection="column">
-						<Text>
-							<Text color="green">↑/k</Text> - Move up
-						</Text>
-						<Text>
-							<Text color="green">↓/j</Text> - Move down
-						</Text>
-						<Text>
-							<Text color="green">←/h</Text> - Previous page
-						</Text>
-						<Text>
-							<Text color="green">→/l</Text> - Next page
-						</Text>
-						<Text>
-							<Text color="green">g</Text> - Jump to first task
-						</Text>
-						<Text>
-							<Text color="green">G</Text> - Jump to last task
-						</Text>
+						<Text><Text bold>↑/k</Text> - Move up</Text>
+						<Text><Text bold>↓/j</Text> - Move down</Text>
+						<Text><Text bold>←/h</Text> - Previous page</Text>
+						<Text><Text bold>→/l</Text> - Next page</Text>
+						<Text><Text bold>g</Text> - Jump to first task</Text>
+						<Text><Text bold>G</Text> - Jump to last task</Text>
 					</Box>
 				</Box>
 
 				<Box marginTop={1} flexDirection="column">
-					<Text bold color="yellow">
-						Search & Filter:
-					</Text>
+					<Text bold>Search & Filter:</Text>
 					<Box paddingLeft={2} flexDirection="column">
-						<Text>
-							<Text color="green">/</Text> - Start filtering
-						</Text>
-						<Text>
-							<Text color="green">ESC</Text> - Exit filter mode / Clear filter
-						</Text>
-						<Text>
-							<Text color="green">c</Text> - Clear active filter
-						</Text>
-						<Text>
-							<Text color="green">Enter</Text> - Confirm filter / Execute task
-						</Text>
+						<Text><Text bold>/</Text> - Start filtering</Text>
+						<Text><Text bold>ESC</Text> - Exit filter mode / Clear filter</Text>
+						<Text><Text bold>c</Text> - Clear active filter</Text>
+						<Text><Text bold>Enter</Text> - Confirm filter / Execute task</Text>
 					</Box>
 				</Box>
 
 				<Box marginTop={1} flexDirection="column">
-					<Text bold color="yellow">
-						Actions:
-					</Text>
+					<Text bold>Actions:</Text>
 					<Box paddingLeft={2} flexDirection="column">
-						<Text>
-							<Text color="green">Enter</Text> - Execute selected task
-						</Text>
-						<Text>
-							<Text color="green">v</Text> - Toggle view mode
-						</Text>
-						<Text>
-							<Text color="green">?</Text> - Toggle this help
-						</Text>
-						<Text>
-							<Text color="green">q/ESC</Text> - Quit
-						</Text>
+						<Text><Text bold>Enter</Text> - Execute selected task</Text>
+						<Text><Text bold>v</Text> - Toggle view mode</Text>
+						<Text><Text bold>?</Text> - Toggle this help</Text>
+						<Text><Text bold>q/ESC</Text> - Quit</Text>
 					</Box>
 				</Box>
 
@@ -484,6 +429,8 @@ export async function renderTasksList(
 
 		waitUntilExit().then(() => {
 			unmount();
+			// Clear the TUI from the terminal after exit
+			process.stdout.write("\x1b[2J\x1b[H");
 			resolve();
 		});
 	});

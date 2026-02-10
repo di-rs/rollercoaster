@@ -461,6 +461,8 @@ export async function renderProjectsList(
 
 		waitUntilExit().then(() => {
 			unmount();
+			// Clear the TUI from the terminal after exit
+			process.stdout.write("\x1b[2J\x1b[H");
 			resolve(selectedProject);
 		});
 	});
