@@ -1,6 +1,6 @@
 {
 	"name": "@di-rs/rollercoaster",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"description": "CLI tool for running tasks without knowing the manager",
 	"type": "module",
 	"packageManager": "bun@1.1.0",
