@@ -1,5 +1,17 @@
 # @di-rs/rollercoaster
 
+## 1.4.0
+
+### Minor Changes
+
+- e6ce8b3: UI improvements, bun.lock detection fix, and test fixes
+
+  - Auto-open filter when `rollercoaster` is launched with no arguments
+  - Minimal color scheme: replaced colorful palette with white/bold/dimColor
+  - Clear terminal after TUI exit (tasks-list, projects-list, config-list)
+  - Fix package manager detection: support `bun.lock` text format (Bun 1.1+) in addition to `bun.lockb`
+  - Fix flaky test: replace case-sensitive Taskfile priority test with cross-platform safe variant
+
 ## 1.3.1
 
 ### Patch Changes
