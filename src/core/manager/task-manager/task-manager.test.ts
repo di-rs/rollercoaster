@@ -328,7 +328,7 @@ tasks:
 	});
 
 	describe("taskfile priority", () => {
-		it("should prefer Taskfile.yml over other variations", async () => {
+		it("should prefer Taskfile.yml over Taskfile.dist.yml", async () => {
 			await writeFile(
 				join(testDir, "Taskfile.yml"),
 				`version: '3'
@@ -339,7 +339,7 @@ tasks:
 			);
 
 			await writeFile(
-				join(testDir, "taskfile.yml"),
+				join(testDir, "Taskfile.dist.yml"),
 				`version: '3'
 tasks:
   second:
@@ -352,6 +352,32 @@ tasks:
 
 			expect(tasks).toHaveLength(1);
 			expect(tasks[0].name).toBe("first");
+		});
+
+		it("should prefer Taskfile.yaml over Taskfile.dist.yaml", async () => {
+			await writeFile(
+				join(testDir, "Taskfile.yaml"),
+				`version: '3'
+tasks:
+  primary:
+    cmds:
+      - echo primary`,
+			);
+
+			await writeFile(
+				join(testDir, "Taskfile.dist.yaml"),
+				`version: '3'
+tasks:
+  fallback:
+    cmds:
+      - echo fallback`,
+			);
+
+			const manager = new TaskManager(testDir);
+			const tasks = await manager.listTasks();
+
+			expect(tasks).toHaveLength(1);
+			expect(tasks[0].name).toBe("primary");
 		});
 	});
 });

@@ -54,8 +54,16 @@ describe("JsManager", () => {
 			expect(title.name).toBe("npm");
 		});
 
-		it("should detect bun from lock file", async () => {
+		it("should detect bun from bun.lockb binary lock file", async () => {
 			await writeFile(join(testDir, "bun.lockb"), "");
+			const manager = new JsManager(testDir, "npm");
+			const title = manager.getTitle();
+
+			expect(title.name).toBe("bun");
+		});
+
+		it("should detect bun from bun.lock text lock file", async () => {
+			await writeFile(join(testDir, "bun.lock"), "");
 			const manager = new JsManager(testDir, "npm");
 			const title = manager.getTitle();
 

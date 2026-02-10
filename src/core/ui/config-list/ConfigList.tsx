@@ -383,6 +383,8 @@ export async function renderConfigList(): Promise<void> {
 
 		waitUntilExit().then(() => {
 			unmount();
+			// Clear the TUI from the terminal after exit
+			process.stdout.write("\x1b[2J\x1b[H");
 			resolve();
 		});
 	});
